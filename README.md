@@ -1,24 +1,10 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## AccountRelay
 
-Things you may want to cover:
+Server provides a relay service for accounts specificed to it and delivers status updates from those accounts, via relay, to that instance.
 
-* Ruby version
+## Setup
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Rails version: 6.1.7.3
+Ruby version: ruby 3.2.1 (2023-02-08 revision 31819e82c8)
