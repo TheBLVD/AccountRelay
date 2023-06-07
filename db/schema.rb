@@ -10,11 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_07_205354) do
+ActiveRecord::Schema.define(version: 2023_06_07_211822) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "username"
+    t.string "domain"
+    t.uuid "instance_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["instance_id"], name: "index_accounts_on_instance_id"
+  end
 
   create_table "instances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "integer_id"
@@ -26,4 +35,5 @@ ActiveRecord::Schema.define(version: 2023_06_07_205354) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "accounts", "instances"
 end
