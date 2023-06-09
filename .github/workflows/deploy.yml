@@ -1,0 +1,34 @@
+# This is a basic workflow to help you get started with Actions
+name: Deploy with Capistrano
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: ${{github.ref_name}}
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libidn11-dev imagemagick libpam-dev libldap2-dev
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          # ruby-version: 3.0.6 not needed with a .ruby-version file
+          bundler-cache: true
+          cache-version: 1
+      - name: Deploy to Staging
+        uses: miloserdow/capistrano-deploy@master
+        with:
+          target: staging
+          deploy_key: ${{ secrets.DEPLOY_ENC_KEY }}
