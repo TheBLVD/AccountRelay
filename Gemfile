@@ -4,7 +4,16 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.2.1'
 
 gem 'active_model_serializers', '~> 0.10.0'
+gem 'addressable', '~> 2.8'
+# HTTP
+gem 'http', '~> 5.1'
+gem 'http_accept_language', '~> 2.1'
+gem 'httplog', '~> 1.6.2'
+# JSON-LD
+gem 'json-ld'
+gem 'json-ld-preloaded', '~> 3.2'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
+gem 'oj', '~> 3.13'
 gem 'rails', '~> 6.1.7', '>= 6.1.7.2'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1'
