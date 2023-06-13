@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module JsonLdHelper
+module JsonldHelper
   include ContextHelper
   def fetch_resource(uri, id, on_behalf_of = nil)
     unless id
@@ -20,7 +20,7 @@ module JsonLdHelper
 
     build_request(uri, on_behalf_of).perform do |response|
       unless response_successful?(response) || response_error_unsalvageable?(response) || !raise_on_temporary_error
-        raise Mastodon::UnexpectedResponseError,
+        raise AccountRelay::UnexpectedResponseError,
               response
       end
 

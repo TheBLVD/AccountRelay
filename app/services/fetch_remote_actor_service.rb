@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FetchRemoteActorService < BaseService
-  #   include JsonLdHelper
+  include JsonLdHelper
   include WebfingerHelper
 
   class Error < StandardError; end

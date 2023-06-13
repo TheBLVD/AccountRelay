@@ -18,5 +18,7 @@ class FetchRemoteStatusesService < BaseService
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
     outbox = outbox!("#{@username}@#{@domain}", 0)
+    Rails.logger.debug '>>>>>>>>'
+    Rails.logger.debug "#{outbox.ordered_items}"
   end
 end
