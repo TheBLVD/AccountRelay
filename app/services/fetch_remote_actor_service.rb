@@ -34,8 +34,8 @@ class FetchRemoteActorService < BaseService
       return
     end
 
-    webfinger                            = webfinger!("acct:#{confirmed_username}@#{confirmed_domain}")
-    @username, @domain                   = split_acct(webfinger.subject)
+    webfinger = webfinger!("acct:#{confirmed_username}@#{confirmed_domain}")
+    @username, @domain = split_acct(webfinger.subject)
 
     unless confirmed_username.casecmp(@username).zero? && confirmed_domain.casecmp(@domain).zero?
       raise Webfinger::RedirectError,

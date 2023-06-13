@@ -1,4 +1,4 @@
 class Account < ApplicationRecord
-  validates :handle, uniqueness: { scope: :instance_id }
+  validates :handle, uniqueness: { scope: :owner }
   belongs_to :instance
 end
