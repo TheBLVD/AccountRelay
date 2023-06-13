@@ -9,26 +9,14 @@ class ActivitypubOutbox
     def initialize(uri, body)
       @uri  = uri
       @json = Oj.load(body, mode: :strict)
-
-      validate_response!
     end
 
     def subject
       @json['subject']
     end
 
-    def link(rel, attribute)
-      links.dig(rel, attribute)
-    end
-
-    private
-
-    def links
-      @links ||= @json['links'].index_by { |link| link['rel'] }
-    end
-
-    def validate_response!
-      raise ActivityPubOutbox::Error, "Missing subject in response for #{@uri}" if subject.blank?
+    def ordered_items
+      @json['orderedItems']
     end
   end
 
@@ -53,25 +41,22 @@ class ActivitypubOutbox
 
   def body_from_outbox(url = standard_url)
     outbox_request(url).perform do |res|
-      if res.code == 200
-        body = res.body_with_limit
-        raise ActivityPubOutbox::Error, "Request for #{@uri} returned empty response" if body.empty?
+      raise ActivityPubOutbox::Error, "Request for #{@uri} returned HTTP #{res.code}" unless res.code == 200
 
-        body
-      elsif res.code == 410
-        raise ActivityPubOutbox::GoneError, "#{@uri} is gone from the server"
-      else
-        raise ActivityPubOutbox::Error, "Request for #{@uri} returned HTTP #{res.code}"
-      end
+      res.body.to_s
     end
   end
 
   def outbox_request(url)
-    Request.new(:get, url).add_headers('Accept' => 'application/jrd+json, application/json')
+    Request.new(:get, url)
   end
 
   # https://staging.moth.social/users/jtomchak/outbox?min_id=0&page=true
   def standard_url
-    "https://#{@domain}/users/#{@username}/outbox?min_id=#{@min_id}&page=true"
+    if @min_id.zero?
+      "https://#{@domain}/users/#{@username}/outbox?page=true"
+    else
+      "https://#{@domain}/users/#{@username}/outbox?min_id=#{@min_id}&page=true"
+    end
   end
 end

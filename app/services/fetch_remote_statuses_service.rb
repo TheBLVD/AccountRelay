@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# https://staging.moth.social/users/jtomchak/outbox?min_id=0&page=true
+# Given an account fetch all the latest statuses
+# for a given min_id (ie the last successful status retrived and sent)
 class FetchRemoteStatusesService < BaseService
   include ActivitypubOutboxHelper
   def call(uri, _options = {})
@@ -11,12 +12,11 @@ class FetchRemoteStatusesService < BaseService
     else
       @username, @domain = uri.strip.gsub(/\A@/, '').split('@')
     end
-
     fetch_outbox!
   end
 
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
-    @outbox = outbox!("#{@username}@#{@domain}", 0)
+    outbox = outbox!("#{@username}@#{@domain}", 0)
   end
 end
