@@ -2,6 +2,7 @@
 
 module WellKnown
   class WebfingerController < ApiController
+    skip_before_action :authenticate_request
     before_action :username_from_resource, only: [:show]
     def show
       @domain = 'acccountrelay.moth.social'

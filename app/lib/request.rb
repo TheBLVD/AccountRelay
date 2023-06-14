@@ -34,6 +34,8 @@ class Request
   def on_behalf_of(actor, sign_with: nil)
     raise ArgumentError, 'actor must not be nil' if actor.nil?
 
+    Rails.logger.debug '>>>>ON_BEHALF_OF'
+    Rails.logger.debug sign_with
     @actor         = actor
     @keypair       = sign_with.present? ? OpenSSL::PKey::RSA.new(sign_with) : @actor.keypair
 
@@ -116,7 +118,15 @@ class Request
   end
 
   def key_id
-    ActivityPub::TagManager.instance.key_uri_for(@actor)
+    key_uri_for(@actor)
+  end
+
+  def key_uri_for(target)
+    [uri_for(target), '#main-key'].join
+  end
+
+  def uri_for(target)
+    target.uri
   end
 
   def http_client
