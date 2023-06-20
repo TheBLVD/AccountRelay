@@ -12,6 +12,8 @@ set :rbenv_type, :user
 set :rbenv_ruby, File.read('.ruby-version').strip
 set :migration_role, :app
 
+set :linked_dirs, %w[log public/system]
+
 append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', '.bundle', 'public/system',
        'public/uploads'
 

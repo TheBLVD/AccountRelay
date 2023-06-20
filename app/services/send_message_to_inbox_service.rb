@@ -4,7 +4,7 @@
 # and POST that payload to the target inbox
 class SendMessageToInboxService < BaseService
   HEADERS = { 'Content-Type' => 'application/activity+json' }.freeze
-  @relay = 'http://localhost:3001'
+  @relay = 'https://acctrelay.moth.social'
   class Error < StandardError; end
 
   def call(_target_host, content)
@@ -21,7 +21,7 @@ class SendMessageToInboxService < BaseService
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
     header        = 'keyId="#{@relay}/actor",headers="(request-target) host date",signature="' + signature + '"'
 
-    Rails.logger.debug "#{date} \n #{keypair} \n #{signed_string} \n #{signature} \n #{header}"
+    Rails.logger.info "#{date} \n #{keypair} \n #{signed_string} \n #{signature} \n #{header}"
     HTTP.headers({ 'Host': @relay.to_s, 'Date': date, 'Signature': header })
         .post("#{@target_host}/inbox", body: @content.to_s)
   end
