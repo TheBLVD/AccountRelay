@@ -7,8 +7,8 @@ class SendMessageToInboxService < BaseService
   @relay = 'https://acctrelay.moth.social'
   class Error < StandardError; end
 
-  def call(_target_host, content)
-    @target_host = 'http://localhost:3000'
+  def call(target_host, content)
+    @target_host = target_host
     @content = content.to_json
 
     post_message_to_inbox
