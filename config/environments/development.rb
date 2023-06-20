@@ -76,6 +76,7 @@ Rails.application.configure do
 
   # Allow ngrok
   config.hosts << /[a-z0-9-]+\.ngrok-free\.app/
+  config.hosts << 'acctrelay.moth.social'
 
   module PrivateAddressCheck
     def self.private_address?(*)
