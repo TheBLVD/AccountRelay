@@ -16,7 +16,7 @@ class SendMessageToInboxService < BaseService
 
   def post_message_to_inbox
     date = Time.now.utc.httpdate
-    keypair       = OpenSSL::PKey::RSA.new(File.read("#{Rails.root}/private.pem"))
+    keypair       = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
     signed_string = "(request-target): post /inbox\nhost: #{@target_host}\ndate: #{date}"
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
     header        = 'keyId="#{@relay}/actor",headers="(request-target) host date",signature="' + signature + '"'
