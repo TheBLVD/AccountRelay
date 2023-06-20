@@ -4,7 +4,7 @@ class RelayInboxController < ApiController
 
   def create
     @host = params['actor']
-    @relay = 'https://7ad1-71-209-214-147.ngrok-free.app'
+    @relay = 'http://localhost:3001'
     Rails.logger.debug '>>>>>>'
     Rails.logger.debug "#{request.host_with_port}#{request.fullpath}"
     SendMessageToInboxService.new.call(@host, instance_follow)

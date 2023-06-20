@@ -4,27 +4,25 @@
 # and POST that payload to the target inbox
 class SendMessageToInboxService < BaseService
   HEADERS = { 'Content-Type' => 'application/activity+json' }.freeze
+  @relay = 'http://localhost:3001'
   class Error < StandardError; end
 
-  def call(target_host, content)
-    @target_host = target_host
+  def call(_target_host, content)
+    @target_host = 'http://localhost:3000'
     @content = content.to_json
 
     post_message_to_inbox
   end
 
   def post_message_to_inbox
-    build_post_request(@target_host).perform do |response|
-      Rails.logger.debug response.inspect
+    date = Time.now.utc.httpdate
+    keypair       = OpenSSL::PKey::RSA.new(File.read("#{Rails.root}/private.pem"))
+    signed_string = "(request-target): post /inbox\nhost: #{@target_host}\ndate: #{date}"
+    signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
+    header        = 'keyId="#{@relay}/actor",headers="(request-target) host date",signature="' + signature + '"'
 
-      body_to_json(response.body_with_limit) if response.code == 200
-    end
-  end
-
-  def build_post_request(uri)
-    Request.new(:post, uri, body: @content).tap do |request|
-      # request.on_behalf_of(@source_account, sign_with: @options[:sign_with])
-      request.add_headers(HEADERS)
-    end
+    Rails.logger.debug "#{date} \n #{keypair} \n #{signed_string} \n #{signature} \n #{header}"
+    HTTP.headers({ 'Host': @relay.to_s, 'Date': date, 'Signature': header })
+        .post("#{@target_host}/inbox", body: @content.to_s)
   end
 end

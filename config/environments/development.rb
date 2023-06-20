@@ -75,7 +75,8 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
 
   # Allow ngrok
-  config.hosts << /[a-z0-9-]+\.ngrok-free\.app/
+  # config.hosts << /[a-z0-9-]+\.ngrok-free\.app/
+  config.hosts.clear
 
   module PrivateAddressCheck
     def self.private_address?(*)
