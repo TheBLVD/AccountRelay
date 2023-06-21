@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   ## Relay Inbox
   post '/inbox', to: 'relay_inbox#create', as: :relay_inbox
-  post '/actor', to: 'relay_actor#show', as: :relay_actor
+  get '/actor', to: 'relay_actor#show', as: :relay_actor
 
   ## API
   namespace :api do
