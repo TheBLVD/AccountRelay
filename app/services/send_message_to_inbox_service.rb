@@ -23,8 +23,14 @@ class SendMessageToInboxService < BaseService
     Rails.logger.info "CONTENT: #{@content}"
     Rails.logger.info "TARGET_HOST: #{@target_host}"
 
+    # HTTP.headers({ 'Host': 'mastodon.social', 'Date': date, 'Signature': header })
+    #     .post('https://mastodon.social/inbox', body: document)
+    # { 'Host': @relay.to_s, 'Date': date, 'Signature': header, 'Content-Type': 'application/activity+json' }
     Rails.logger.info "Header #{header}"
-    response = HTTP.post('https://staging.moth.social/inbox', json: @content)
+
+    response = HTTP.headers('Host': 'staging.moth.social', 'Date': date, 'Signature': header, content_type: 'application/activity+json').post(
+      'https://staging.moth.social/inbox', json: @content
+    )
 
     Rails.logger.info "RESPONSE:>>>> #{response.status}"
     Rails.logger.info "RESPONSE_BODY:>>>> #{response.body}"
