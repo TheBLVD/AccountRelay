@@ -19,7 +19,7 @@ class SendMessageToInboxService < BaseService
     keypair       = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
     signed_string = "(request-target): post /inbox\nhost: #{@target_host}\ndate: #{date}"
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
-    header        = 'keyId="#{@relay}/actor",headers="(request-target) host date",signature="' + signature + '"'
+    header        = "keyId=\"#{@relay}/actor\",headers=\"(request-target) host date\",signature=\"#{signature}\""
 
     Rails.logger.info "#{date} \n #{keypair} \n #{signed_string} \n #{signature} \n #{header}"
     HTTP.headers({ 'Host': @relay.to_s, 'Date': date, 'Signature': header })
