@@ -21,6 +21,9 @@ class SendMessageToInboxService < BaseService
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
     header        = "keyId=\"https://acctrelay.moth.social/actor\",headers=\"(request-target) host date\",signature=\"#{signature}\""
 
+    Rails.logger.info "CONTENT: #{@content}"
+    Rails.logger.info "TARGET_HOST: #{@target_host}"
+
     Rails.logger.info "#{date} \n #{keypair} \n #{signed_string} \n #{signature} \n #{header}"
     HTTP.headers({ 'Host': @relay.to_s, 'Date': date, 'Signature': header })
         .post("#{@target_host}/inbox", body: @content.to_s)
