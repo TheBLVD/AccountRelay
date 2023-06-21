@@ -5,28 +5,32 @@ class RelayActorController < ApiController
     Rails.logger.info '>>>>>>'
     Rails.logger.info '#{requst.url}'
     Rails.logger.info "GET relay_actor request: #{params.inspect}"
-    render json: {}, content_type: 'application/activity+json; charset=utf-8'
+    render json: actor_payload, content_type: 'application/activity+json; charset=utf-8'
   end
 
   private
 
   def actor_payload
     {
-      "@context": [
-        'https://www.w3.org/ns/activitystreams',
-        'https://w3id.org/security/v1'
-      ],
-
-      "id": 'https://my-example.com/actor',
-      "type": 'Person',
-      "preferredUsername": 'alice',
-      "inbox": 'https://my-example.com/inbox',
-
+      "@context": 'https://www.w3.org/ns/activitystreams',
+      "endpoints": {
+        "sharedInbox": 'https://acctrelay.moth.social/inbox'
+      },
+      "followers": 'https://acctrelay.moth.social/followers',
+      "following": 'https://acctrelay.moth.social/following',
+      "inbox": 'https://acctrelay.moth.social/inbox',
+      "name": 'AcctRelay',
+      "type": 'Application',
+      "id": 'https://acctrelay.moth.social/actor',
       "publicKey": {
-        "id": 'https://my-example.com/actor#main-key',
-        "owner": 'https://my-example.com/actor',
-        "publicKeyPem": '-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----'
-      }
+        "id": 'https://acctrelay.moth.social/actor#main-key',
+        "owner": 'https://acctrelay.moth.social/actor',
+        "publicKeyPem": ENV['PUBLIC_KEY']
+      },
+      "summary": 'AcctRelay',
+      "preferredUsername": 'relay',
+      "url": 'https://acctrelay.moth.social/actor'
+
     }
   end
 end
