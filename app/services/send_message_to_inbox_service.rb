@@ -3,7 +3,6 @@
 # Given a paylaod this will provide a signature
 # and POST that payload to the target inbox
 class SendMessageToInboxService < BaseService
-  HEADERS = { 'Content-Type' => 'application/activity+json' }.freeze
   @relay = 'https://acctrelay.moth.social'
   class Error < StandardError; end
 
@@ -24,8 +23,8 @@ class SendMessageToInboxService < BaseService
     Rails.logger.info "CONTENT: #{@content}"
     Rails.logger.info "TARGET_HOST: #{@target_host}"
 
-    Rails.logger.info "#{date} \n #{keypair} \n #{signed_string} \n #{signature} \n #{header}"
-    HTTP.headers({ 'Host': @relay.to_s, 'Date': date, 'Signature': header })
+    Rails.logger.info "Header #{header}"
+    HTTP.headers({ 'Host': @relay.to_s, 'Date': date, 'Signature': header, 'Content-Type': 'application/activity+json' })
         .post("#{@target_host}/inbox", body: @content.to_s)
   end
 end
