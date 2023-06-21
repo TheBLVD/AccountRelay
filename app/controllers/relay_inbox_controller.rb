@@ -19,11 +19,12 @@ class RelayInboxController < ApiController
     {
       '@context': 'https://www.w3.org/ns/activitystreams',
       'type': 'Accept',
-      'to': [@host.to_s],
       'actor': "#{@relay}/actor",
+      'id': "#{@relay}/activities/#{SecureRandom.uuid}",
       'object': {
         'type': 'Follow',
         'actor': @host.to_s,
+        'object': "#{@relay}/actor",
         'id': "#{@relay}/activities/#{SecureRandom.uuid}"
       }
     }
