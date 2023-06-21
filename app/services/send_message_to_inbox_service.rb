@@ -23,7 +23,7 @@ class SendMessageToInboxService < BaseService
 
   def post_message_to_inbox
     sha256 = OpenSSL::Digest.new('SHA256')
-    digest = 'SHA-256=' + Base64.strict_encode64(sha256.digest(@content.to_s))
+    digest = 'SHA-256=' + Base64.strict_encode64(sha256.digest(@content.to_json))
 
     date = Time.now.utc.httpdate
     keypair       = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
@@ -33,6 +33,7 @@ class SendMessageToInboxService < BaseService
 
     Rails.logger.info "CONTENT: #{@content}"
     Rails.logger.info "TARGET_HOST: #{@target_host}"
+    Rails.logger.info "SHA256: #{sha256}"
     Rails.logger.info "DIGEST HEADER: #{digest}"
     Rails.logger.info "SIGNED_STRING: #{signed_string}"
 
