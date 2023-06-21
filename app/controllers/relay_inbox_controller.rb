@@ -8,6 +8,7 @@ class RelayInboxController < ApiController
     Rails.logger.info '>>>>>>'
     Rails.logger.info "#{request.host_with_port}#{request.fullpath}"
     Rails.logger.info "PARAMS: #{params}"
+    @id = params['id']
     SendMessageToInboxService.new.call(@host, instance_follow)
     render json: instance_follow, content_type: 'application/activity+json'
   end
@@ -18,16 +19,22 @@ class RelayInboxController < ApiController
 
   def instance_follow
     {
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      'type': 'Accept',
+      "@context": [
+        'https://www.w3.org/ns/activitystreams',
+        'https://w3id.org/security/v1'
+      ],
       'actor': "#{@relay}/actor",
       'id': "#{@relay}/activities/#{SecureRandom.uuid}",
+      'type': 'Accept',
       'object': {
         'type': 'Follow',
         'actor': @host.to_s,
         'object': "#{@relay}/actor",
-        'id': "#{@relay}/activities/#{SecureRandom.uuid}"
-      }
+        'id': @id.to_s
+      },
+      "to": [
+        @host.to_s
+      ]
     }
   end
 end
