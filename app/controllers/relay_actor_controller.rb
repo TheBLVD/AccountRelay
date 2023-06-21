@@ -3,7 +3,7 @@ class RelayActorController < ApiController
   @relay = 'https://acctrelay.moth.social'
   def show
     Rails.logger.info '>>>>>>'
-    Rails.logger.info '#{requst.url}'
+    Rails.logger.info request.fullpath
     Rails.logger.info "GET relay_actor request: #{params.inspect}"
     render json: actor_payload, content_type: 'application/activity+json; charset=utf-8'
   end
@@ -30,7 +30,6 @@ class RelayActorController < ApiController
       "summary": 'AcctRelay',
       "preferredUsername": 'relay',
       "url": 'https://acctrelay.moth.social/actor'
-
     }
   end
 end
