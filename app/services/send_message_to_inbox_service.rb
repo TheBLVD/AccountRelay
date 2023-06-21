@@ -25,6 +25,6 @@ class SendMessageToInboxService < BaseService
 
     Rails.logger.info "Header #{header}"
     HTTP.headers({ 'Host': @relay.to_s, 'Date': date, 'Signature': header, 'Content-Type': 'application/activity+json' })
-        .post("#{@target_host}/inbox", body: @content.to_s)
+        .post("#{@target_host}/inbox", body: @content)
   end
 end
