@@ -23,7 +23,7 @@ class SendMessageToInboxService < BaseService
 
   def post_message_to_inbox
     sha256 = OpenSSL::Digest.new('SHA256')
-    digest = 'SHA-256=' + Base64.strict_encode64(sha256.digest(@content))
+    digest = 'SHA-256=' + Base64.strict_encode64(sha256.digest(@content.to_s))
 
     date = Time.now.utc.httpdate
     keypair       = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
