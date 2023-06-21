@@ -5,7 +5,7 @@ module WellKnown
     skip_before_action :authenticate_request
     before_action :username_from_resource, only: [:show]
     def show
-      @domain = 'acccountrelay.moth.social'
+      @domain = 'acctrelay.moth.social'
       expires_in 3.days, public: true
       render json: actor_webfinger, content_type: 'application/jrd+json'
     end
@@ -37,7 +37,7 @@ module WellKnown
     def username_from_resource
       resource_user    = resource_param
       username, domain = resource_user.split('@')
-      return not_found unless username == 'acct:relay' && domain == 'acccountrelay.moth.social'
+      return not_found unless username == 'acct:relay' && domain == 'acctrelay.moth.social'
     end
 
     def resource_param
