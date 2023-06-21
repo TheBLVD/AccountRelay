@@ -8,7 +8,7 @@ class SendMessageToInboxService < BaseService
 
   def call(target_host, content)
     @target_host = target_host
-    @content = content.to_json
+    @content = content
 
     post_message_to_inbox
   end
