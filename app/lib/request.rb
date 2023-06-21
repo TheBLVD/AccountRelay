@@ -23,7 +23,7 @@ class Request
     @headers     = {}
 
     if block_hidden_service?
-      raise AccountRelay::HostValidationError,
+      raise Exceptions::HostValidationError,
             'Instance does not support hidden service connections'
     end
 
@@ -178,10 +178,10 @@ class Request
     end
 
     def body_with_limit(limit = 1.megabyte)
-      raise AccountRelay::LengthValidationError if content_length.present? && content_length > limit
+      raise Exceptions::LengthValidationError if content_length.present? && content_length > limit
 
       contents = truncated_body(limit)
-      raise AccountRelay::LengthValidationError if contents.bytesize > limit
+      raise Exceptions::LengthValidationError if contents.bytesize > limit
 
       contents
     end
@@ -275,7 +275,7 @@ class Request
       def check_private_address(address, host)
         addr = IPAddr.new(address.to_s)
         return if private_address_exceptions.any? { |range| range.include?(addr) }
-        raise AccountRelay::PrivateNetworkAddressError, host if PrivateAddressCheck.private_address?(addr)
+        raise Exceptions::PrivateNetworkAddressError, host if PrivateAddressCheck.private_address?(addr)
       end
 
       def private_address_exceptions
