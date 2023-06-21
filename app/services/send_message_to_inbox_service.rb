@@ -25,7 +25,7 @@ class SendMessageToInboxService < BaseService
 
     Rails.logger.info "Header #{header}"
     response = HTTP.headers({ 'Host': @relay.to_s, 'Date': date, 'Signature': header, 'Content-Type': 'application/activity+json' })
-                   .post("#{@target_host}/inbox", body: @content)
+                   .post('https://staging.moth.social/inbox', json: @content)
 
     Rails.logger.info "RESPONSE:>>>> #{response.status}"
     Rails.logger.info "RESPONSE_BODY:>>>> #{response.body}"
