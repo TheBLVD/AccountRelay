@@ -19,7 +19,7 @@ class SendMessageToInboxService < BaseService
 
     date          = Time.now.utc.httpdate
     keypair       = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
-    signed_string = "(request-target): post /inbox\nhost: #{@target_host}\ndate: #{date}\ndigest: #{digest}"
+    signed_string = "(request-target): post /inbox\nhost: staging.moth.social\ndate: #{date}\ndigest: #{digest}"
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
     header        = "keyId=\"https://acctrelay.moth.social/actor#main-key\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest content-type\", signature=\"#{signature}\""
 
