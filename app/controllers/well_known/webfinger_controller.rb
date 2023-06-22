@@ -7,6 +7,9 @@ module WellKnown
     def show
       @domain = 'acctrelay.moth.social'
       expires_in 3.days, public: true
+      Rails.logger.info '>>>>>>WEBFINGER:'
+      Rails.logger.info request.fullpath
+      Rails.logger.info "GET relay_actor request: #{params.inspect}"
       render json: actor_webfinger, content_type: 'application/jrd+json'
     end
 
