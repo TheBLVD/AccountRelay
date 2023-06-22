@@ -21,6 +21,7 @@ class FetchRemoteStatusesService < BaseService
     outbox.ordered_items.each do |status|
       Rails.logger.info '>>>>>>>>'
       Rails.logger.info status
+      SendMessageToInboxService.new.call('https://staging.moth.social', status)
     end
   end
 end
