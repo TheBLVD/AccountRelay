@@ -22,7 +22,7 @@ class SendMessageToInboxService < BaseService
     keypair       = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
     signed_string = "(request-target): post /inbox\nhost: #{target_host}\ndate: #{date}\ndigest: #{digest}"
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
-    header        = 'keyId="https://acctrelay.moth.social/actor#main-key",headers="(request-target) host date digest",signature="' + signature + '"'
+    header        = "keyId=\"https://acctrelay.moth.social/actor#main-key\", headers=\"(request-target) host date digest\",signature=\"#{signature}\""
 
     Rails.logger.info "CONTENT: #{@content}"
     Rails.logger.info "TARGET_HOST: #{target_host}"
