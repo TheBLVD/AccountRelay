@@ -3,12 +3,14 @@ class RelayInboxController < ApiController
   before_action :require_follow_type!
 
   def create
-    @host = params['actor']
+    # @host = params['actor']
+    @host = 'https://staging.moth.social/actor'
     @relay = 'https://acctrelay.moth.social'
     Rails.logger.info '>>>>>>'
     Rails.logger.info "#{request.host_with_port}#{request.fullpath}"
     Rails.logger.info "PARAMS: #{params}"
-    @id = params['id']
+    # @id = params['id']
+    @id = SecureRandom.uuid
     SendMessageToInboxService.new.call(@host, instance_follow)
     render json: instance_follow, content_type: 'application/activity+json'
   end
