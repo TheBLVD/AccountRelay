@@ -22,22 +22,10 @@ class SendMessageToInboxService < BaseService
     keypair       = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
     signed_string = "(request-target): post /inbox\nhost: #{target_host}\ndate: #{date}\ndigest: #{digest}"
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
-    header        = "keyId=\"https://acctrelay.moth.social/actor#main-key\", headers=\"(request-target) host date digest\",signature=\"#{signature}\""
+    header        = "keyId=\"#{@relay}/actor#main-key\", headers=\"(request-target) host date digest\",signature=\"#{signature}\""
 
-    Rails.logger.info "CONTENT: #{@content}"
-    Rails.logger.info "TARGET_HOST: #{target_host}"
-    Rails.logger.info "SHA256: #{sha256}"
-    Rails.logger.info "DIGEST HEADER: #{digest}"
-    Rails.logger.info "SIGNED_STRING: #{signed_string}"
-    Rails.logger.info "Header #{header}"
-
-    response = HTTP.headers({ 'host': target_host, 'date': date, 'signature': header, 'digest': digest, 'Content-Type': 'application/activity+json' }).post(
+    HTTP.headers({ 'host': target_host, 'date': date, 'signature': header, 'digest': digest, 'Content-Type': 'application/activity+json' }).post(
       "https://#{target_host}/inbox", json: @content
     )
-
-    Rails.logger.info "RESPONSE:>>>> #{response.status}"
-    Rails.logger.info "RESPONSE_BODY:>>>> #{response.body}"
-    Rails.logger.info response.inspect
-    response
   end
 end
