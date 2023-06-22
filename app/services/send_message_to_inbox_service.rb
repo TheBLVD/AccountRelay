@@ -7,7 +7,7 @@ class SendMessageToInboxService < BaseService
   class Error < StandardError; end
 
   def call(target_host, content)
-    @target_host = target_host
+    @target_host = URI.parse(target_host).host
     @content = content
 
     post_message_to_inbox
@@ -19,9 +19,9 @@ class SendMessageToInboxService < BaseService
 
     date          = Time.now.utc.httpdate
     keypair       = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
-    signed_string = "(request-target): post /inbox\nhost: staging.moth.social\ndate: #{date}\ndigest: #{digest}"
+    signed_string = "(request-target): post /inbox\nhost: #{@target_host}\ndate: #{date}\ndigest: #{digest}"
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
-    header        = 'keyId="https://acctrelay.moth.social/actor#main-key",headers="(request-target) host date digest",signature="' + signature + '"'
+    header        = "keyId=\"https://acctrelay.moth.social/actor#main-key\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest content-type\", signature=\"#{signature}\""
 
     Rails.logger.info "CONTENT: #{@content}"
     Rails.logger.info "TARGET_HOST: #{@target_host}"
@@ -30,8 +30,8 @@ class SendMessageToInboxService < BaseService
     Rails.logger.info "SIGNED_STRING: #{signed_string}"
     Rails.logger.info "Header #{header}"
 
-    response = HTTP.headers({ 'host': 'staging.moth.social', 'date': date, 'signature': header, 'digest': digest, 'Content-Type': 'application/activity+json' }).post(
-      'https://staging.moth.social/inbox', json: @content
+    response = HTTP.headers({ 'host': @target_host.to_s, 'date': date, 'signature': header, 'digest': digest, 'Content-Type': 'application/activity+json' }).post(
+      "https://#{@target_host}/inbox", json: @content
     )
 
     Rails.logger.info "RESPONSE:>>>> #{response.status}"
