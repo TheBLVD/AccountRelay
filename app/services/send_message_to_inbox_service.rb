@@ -30,7 +30,7 @@ class SendMessageToInboxService < BaseService
     Rails.logger.info "SIGNED_STRING: #{signed_string}"
     Rails.logger.info "Header #{header}"
 
-    response = HTTP.headers({ 'host': @target_host, 'date': date, 'signature': header, 'digest': digest, 'Content-Type': 'application/activity+json' }).post(
+    response = HTTP.headers({ 'host': 'staging.moth.social', 'date': date, 'signature': header, 'digest': digest, 'Content-Type': 'application/activity+json' }).post(
       "https://#{@target_host}/inbox", json: @content
     )
 
