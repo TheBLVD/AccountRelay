@@ -5,9 +5,6 @@ class RelayInboxController < ApiController
   def create
     @host = params['actor']
     @relay = 'https://acctrelay.moth.social'
-    Rails.logger.info '>>>>>>'
-    Rails.logger.info "#{request.host_with_port}#{request.fullpath}"
-    Rails.logger.info "PARAMS: #{params}"
     @id = params['id']
     SendMessageToInboxService.new.call(@host, instance_follow)
     render json: instance_follow, content_type: 'application/activity+json'
