@@ -3,7 +3,6 @@
 # Given a paylaod this will provide a signature
 # and POST that payload to the target inbox
 class SendMessageToInboxService < BaseService
-  @relay = 'https://acctrelay.moth.social'
   class Error < StandardError; end
 
   def call(target, content)
@@ -14,6 +13,7 @@ class SendMessageToInboxService < BaseService
   end
 
   def post_message_to_inbox
+    @relay = 'https://acctrelay.moth.social'
     target_host = @target_uri.host
     sha256 = OpenSSL::Digest.new('SHA256')
     digest = 'SHA-256=' + Base64.strict_encode64(sha256.digest(@content.to_json))
