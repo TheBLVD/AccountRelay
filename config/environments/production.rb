@@ -120,4 +120,10 @@ Rails.application.configure do
 
   # Host config
   config.hosts << 'acctrelay.moth.social'
+
+  module PrivateAddressCheck
+    def self.private_address?(*)
+      false
+    end
+  end
 end
