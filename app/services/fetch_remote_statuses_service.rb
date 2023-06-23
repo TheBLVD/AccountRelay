@@ -27,6 +27,7 @@ class FetchRemoteStatusesService < BaseService
 
   def send_announcement(status)
     content = announcement_payload(status['object']['url'])
+    Rails.logger.info "ANNOUNCMENT_CONTENT: >>>> #{content}"
     SendMessageToInboxService.new.call('https://staging.moth.social', content)
   end
 
