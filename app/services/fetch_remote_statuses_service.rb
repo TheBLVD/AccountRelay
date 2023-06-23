@@ -38,7 +38,9 @@ class FetchRemoteStatusesService < BaseService
       'actor': "#{@relay}/actor",
       'id': "#{@relay}/activities/#{SecureRandom.uuid}",
       'type': 'Announce',
-      'object': status_url.to_s,
+      'object': {
+        'id': status_url.to_s
+      },
       "to": [
         "#{@relay}/followers"
       ]
