@@ -21,7 +21,26 @@ class FetchRemoteStatusesService < BaseService
     outbox.ordered_items.each do |status|
       Rails.logger.info '>>>>>>>>'
       Rails.logger.info status
-      SendMessageToInboxService.new.call('https://staging.moth.social', status)
+      send_announcement(status)
     end
+  end
+
+  def send_announcement(_status_url)
+    content = announcement_payload(status['object']['url'])
+    SendMessageToInboxService.new.call('https://staging.moth.social', content)
+  end
+
+  def announcement_payload(status_url)
+    @relay = 'https://acctrelay.moth.social'
+    {
+      "@context": 'https://www.w3.org/ns/activitystreams',
+      'actor': "#{@relay}/actor",
+      'id': "#{@relay}/activities/#{SecureRandom.uuid}",
+      'type': 'Announce',
+      'object': status_url.to_s,
+      "to": [
+        "#{@relay}/followers"
+      ]
+    }
   end
 end
