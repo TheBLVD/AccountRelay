@@ -24,7 +24,7 @@ class SendMessageToInboxService < BaseService
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
     header        = "keyId=\"#{@relay}/actor#main-key\", headers=\"(request-target) host date digest\",signature=\"#{signature}\""
 
-    repsonse = HTTP.headers({ 'host': target_host, 'date': date, 'signature': header, 'digest': digest, 'Content-Type': 'application/activity+json' }).post(
+    response = HTTP.headers({ 'host': target_host, 'date': date, 'signature': header, 'digest': digest, 'Content-Type': 'application/activity+json' }).post(
       "https://#{target_host}/inbox", json: @content
     )
 
