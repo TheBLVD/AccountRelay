@@ -1,0 +1,15 @@
+:concurrency: <%= ENV.fetch('SIDEKIQ_CONCURRENCY', 5) %>
+
+:max_retries: 1
+
+:queues:
+  - [default, 8]
+  - [scheduler]
+
+:scheduler:
+  :listened_queues_only: true
+:schedule:
+  scheduled_statuses_scheduler:
+    every: <%= ENV.fetch('UPDATE_ACCOUNT_STATUSES', "5m") %>
+    class: Scheduler::UpdateAccountStatusesScheduler
+    queue: scheduler

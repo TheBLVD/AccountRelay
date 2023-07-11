@@ -4,13 +4,13 @@
 # for a given min_id (ie the last successful status retrived and sent)
 class FetchRemoteStatusesService < BaseService
   include ActivitypubOutboxHelper
-  def call(uri, _options = {})
-    if uri.is_a?(Account)
-      @account = uri
+  def call(account, _options = {})
+    if account.is_a?(Account)
+      @account = account
       @username = @account.username
       @domain   = @account.domain
     else
-      @username, @domain = uri.strip.gsub(/\A@/, '').split('@')
+      @username, @domain = account.strip.gsub(/\A@/, '').split('@')
     end
     fetch_outbox!
   end
@@ -28,6 +28,7 @@ class FetchRemoteStatusesService < BaseService
   def send_announcement(status)
     content = announcement_payload(status['object']['id'])
     Rails.logger.info "ANNOUNCMENT_CONTENT: >>>> #{content}"
+    # TODO: Update to variable. Needs to be the Instance_id URL
     SendMessageToInboxService.new.call('https://staging.moth.social', content)
   end
 

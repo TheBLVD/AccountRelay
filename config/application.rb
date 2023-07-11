@@ -20,5 +20,8 @@ module AccountRelay
     config.logger = Logger.new('log/acctrelay.log')
     # set the minimum log level
     config.log_level = :warn
+
+    # Enable Sidekiq
+    config.active_job.queue_adapter = :sidekiq
   end
 end

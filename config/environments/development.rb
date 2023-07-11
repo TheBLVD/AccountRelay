@@ -78,6 +78,10 @@ Rails.application.configure do
   config.hosts << /[a-z0-9-]+\.ngrok-free\.app/
   config.hosts << 'acctrelay.moth.social'
 
+  # Sidekiq
+  config.active_job.queue_name_prefix = "account_relay#{Rails.env}"
+  config.active_job.queue_adapter = :sidekiq
+
   module PrivateAddressCheck
     def self.private_address?(*)
       false
