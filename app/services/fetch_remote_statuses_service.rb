@@ -9,7 +9,7 @@ class FetchRemoteStatusesService < BaseService
       @account = account
       @username = @account.username
       @domain   = @account.domain
-      @instance_url = options.url
+      @instance_url = options[:url]
     else
       @username, @domain = account.strip.gsub(/\A@/, '').split('@')
     end

@@ -7,6 +7,6 @@ class PushStatusesWorker
 
   def perform(instance_url, account)
     Rails.logger.debug ">>>>>>>InstanceAccountsWorker: #{account}"
-    FetchRemoteStatusesService.new.call(account, { url: instance_url })
+    FetchRemoteStatusesService.new.call(account, url: instance_url)
   end
 end
