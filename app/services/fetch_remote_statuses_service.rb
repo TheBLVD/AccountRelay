@@ -31,8 +31,7 @@ class FetchRemoteStatusesService < BaseService
     content = announcement_payload(status['object']['id'])
     Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'
     Rails.logger.info "INSTANCE_URL: >>>> #{@instance_url} is the instance it's pushing too"
-    # TODO: Update to variable. Needs to be the Instance_id URL
-    SendMessageToInboxService.new.call('https://staging.moth.social', content)
+    SendMessageToInboxService.new.call(@instance_url, content)
   end
 
   def announcement_payload(status_url)
