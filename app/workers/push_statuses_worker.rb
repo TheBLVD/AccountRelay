@@ -6,7 +6,7 @@ class PushStatusesWorker
   sidekiq_options retry: 0
 
   def perform(instance_url, account)
-    Rails.logger.debug ">>>>>>>InstanceAccountsWorker: #{account}"
+    Rails.logger.info ">>>>>>>InstanceAccountsWorker: #{account}"
     FetchRemoteStatusesService.new.call(account, url: instance_url)
   end
 end
