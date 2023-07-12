@@ -30,7 +30,7 @@ class SendMessageToInboxService < BaseService
 
     # Logging is back :wink:
     Rails.logger.info "RESPONSE:>>>> #{response.status}"
-    Rails.logger.info "RESPONSE_BODY:>>>> #{response.body}"
+    # Rails.logger.info "RESPONSE_BODY:>>>> #{response.body}"
     Rails.logger.info response.inspect
     response
   end
