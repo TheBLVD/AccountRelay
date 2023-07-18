@@ -18,6 +18,10 @@ class ActivitypubOutbox
     def ordered_items
       @json['orderedItems']
     end
+
+    def prev
+      @json['prev']
+    end
   end
 
   def initialize(uri, min_id = 0)
