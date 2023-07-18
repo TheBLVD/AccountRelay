@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_13_162245) do
+ActiveRecord::Schema.define(version: 2023_07_18_212222) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 2023_06_13_162245) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "owner"
     t.string "handle"
+    t.string "min_id"
     t.index ["instance_id"], name: "index_accounts_on_instance_id"
     t.index ["owner", "handle"], name: "index_accounts_on_owner_and_handle", unique: true
     t.index ["owner"], name: "index_accounts_on_owner"
