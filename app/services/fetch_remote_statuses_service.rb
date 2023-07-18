@@ -14,6 +14,7 @@ class FetchRemoteStatusesService < BaseService
       @account = Account.where(username: @username, domain: @domain).first
     end
     @instance_url = options[:url]
+    Rails.logger.info "OPTIONS: >>>> #{options}"
     fetch_outbox!
   end
 
@@ -23,8 +24,9 @@ class FetchRemoteStatusesService < BaseService
     outbox.ordered_items.each do |status|
       send_announcement(status)
     end
+    Rails.logger.info "PREV>>>> #{outbox.prev}"
 
-    # Update min_id for account if present
+    # Update min_id for account
     return if outbox.prev.nil?
 
     min_id = min_id_param(outbox.prev)
