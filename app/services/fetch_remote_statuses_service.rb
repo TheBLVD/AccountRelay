@@ -20,18 +20,17 @@ class FetchRemoteStatusesService < BaseService
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
     outbox = outbox!("#{@username}@#{@domain}", 0)
-    Rails.logger.info "PREV>>>> #{outbox.prev}"
     outbox.ordered_items.each do |status|
       send_announcement(status)
     end
+    Rails.logger.info "PREV>>>> #{outbox.prev}"
 
     # Update min_id for account
-    previous_url = outbox.prev
-    return if previous_url.nil?
+    return if outbox.prev.nil?
 
-    min_id = min_id_param(previous_url)
+    min_id = min_id_param(outbox.prev)
     Rails.logger.info "UPDATE_MIN_ID: >>>> #{min_id}"
-    @account.update_column(min_id:)
+    @account.update_column(:min_id, min_id)
   end
 
   def min_id_param(url)
