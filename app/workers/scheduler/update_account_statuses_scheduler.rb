@@ -12,7 +12,6 @@ class Scheduler::UpdateAccountStatusesScheduler
   sidekiq_options retry: 0
 
   def perform
-    Rails.logger.debug '>>>>>>>CollectAccountStatusesScheduler'
     instances.each do |instance|
       id, url = instance
       accounts = instance_accounts(id)

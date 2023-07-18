@@ -7,6 +7,7 @@ class InstanceAccountsWorker
 
   def perform(url, accounts)
     accounts.each do |account|
+      Rails.logger.info "InstanceAccountsWorker>> #{account}"
       PushStatusesWorker.perform_async(url, account)
     end
   end
