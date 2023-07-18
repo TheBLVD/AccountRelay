@@ -13,12 +13,13 @@ class FetchRemoteStatusesService < BaseService
       @username, @domain = account.strip.gsub(/\A@/, '').split('@')
     end
     @instance_url = options[:url]
+    @min_id = options[:min_id]
     fetch_outbox!
   end
 
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
-    outbox = outbox!("#{@username}@#{@domain}", 0)
+    outbox = outbox!("#{@username}@#{@domain}", @min_id)
     outbox.ordered_items.each do |status|
       send_announcement(status)
     end

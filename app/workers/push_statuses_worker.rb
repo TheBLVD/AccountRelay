@@ -5,8 +5,9 @@ class PushStatusesWorker
 
   sidekiq_options retry: 0
 
-  def perform(instance_url, account)
-    Rails.logger.info ">>>>>>>InstanceAccountsWorker: #{account}"
-    FetchRemoteStatusesService.new.call(account, url: instance_url)
+  def perform(url, account)
+    Rails.logger.info ">>>>>>>PushStatusesWorker: #{account}"
+    handle, min_id = account
+    FetchRemoteStatusesService.new.call(handle, url:, min_id:)
   end
 end
