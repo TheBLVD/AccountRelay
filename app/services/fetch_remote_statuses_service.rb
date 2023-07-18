@@ -25,7 +25,8 @@ class FetchRemoteStatusesService < BaseService
     end
 
     # Update min_id for account
-    previous_url = outbox['prev']
+    Rails.logger.info "OUTBOX>>>> #{outbox}"
+    previous_url = outbox.prev
     return if previous_url.nil?
 
     min_id = min_id_param(previous_url)
