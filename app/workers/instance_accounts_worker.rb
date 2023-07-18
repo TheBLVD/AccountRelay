@@ -6,7 +6,6 @@ class InstanceAccountsWorker
   sidekiq_options retry: 0
 
   def perform(url, accounts)
-    Rails.logger.info ">>>>>>>InstanceAccountsWorker: #{url}: #{accounts}"
     accounts.each do |account|
       PushStatusesWorker.perform_async(url, account)
     end

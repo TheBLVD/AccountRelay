@@ -44,6 +44,7 @@ class ActivitypubOutbox
   private
 
   def body_from_outbox(url = standard_url)
+    Rails.logger.info "URL REQUEST>>>: #{url}"
     outbox_request(url).perform do |res|
       raise ActivityPubOutbox::Error, "Request for #{@uri} returned HTTP #{res.code}" unless res.code == 200
 
