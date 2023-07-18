@@ -20,12 +20,12 @@ class FetchRemoteStatusesService < BaseService
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
     outbox = outbox!("#{@username}@#{@domain}", 0)
+    Rails.logger.info "PREV>>>> #{outbox.prev}"
     outbox.ordered_items.each do |status|
       send_announcement(status)
     end
 
     # Update min_id for account
-    Rails.logger.info "PREV>>>> #{outbox['prev']}"
     previous_url = outbox.prev
     return if previous_url.nil?
 
