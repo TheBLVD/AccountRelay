@@ -35,6 +35,6 @@ class Scheduler::UpdateAccountStatusesScheduler
   # end
 
   def instance_accounts(id)
-    Instance.find(id).accounts.group(:handle, :min_id).pluck(:handle, :min_id)
+    Instance.find(id).accounts.group(:handle).pluck(:handle)
   end
 end
