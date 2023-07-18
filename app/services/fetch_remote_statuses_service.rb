@@ -13,7 +13,6 @@ class FetchRemoteStatusesService < BaseService
       @username, @domain = account.strip.gsub(/\A@/, '').split('@')
     end
     @instance_url = options[:url]
-    Rails.logger.info "OPTIONS: >>>> #{options}"
     fetch_outbox!
   end
 
@@ -23,14 +22,14 @@ class FetchRemoteStatusesService < BaseService
     outbox.ordered_items.each do |status|
       send_announcement(status)
     end
-    Rails.logger.info "PREV>>>> #{outbox.prev}"
 
-    # Update min_id for account
+    # Update min_id for account if present
     return if outbox.prev.nil?
 
     min_id = min_id_param(outbox.prev)
     Rails.logger.info "UPDATE_MIN_ID: >>>> #{min_id}"
-    @account.update_column(:min_id, min_id)
+    @account = Account.where(username: @username, domain: @domain).first
+    @account.update(min_id:)
   end
 
   def min_id_param(url)
