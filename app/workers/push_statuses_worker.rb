@@ -7,8 +7,8 @@ class PushStatusesWorker
 
   def perform(url, account)
     handle, min_id = account
-    Rails.logger.info ">>>>>>>PushStatusesWorker: #{handle}"
-    Rails.logger.info ">>>>>>>PushStatusesWorker: #{min_id}"
+    # Rails.logger.info ">>>>>>>PushStatusesWorker: #{handle}"
+    # Rails.logger.info ">>>>>>>PushStatusesWorker: #{min_id}"
     FetchRemoteStatusesService.new.call(handle, url:, min_id:)
   end
 end
