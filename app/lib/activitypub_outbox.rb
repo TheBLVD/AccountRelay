@@ -27,7 +27,7 @@ class ActivitypubOutbox
   def initialize(uri, min_id = 0)
     @username, @domain = uri.split('@')
     @min_id = min_id
-
+    Rails.logger.info "ACPUB>> #{uri} :: #{min_id}"
     raise ArgumentError, 'Statuses requested for local account' if @domain.nil?
 
     @uri = uri
