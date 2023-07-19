@@ -15,6 +15,7 @@ class FetchRemoteStatusesService < BaseService
     end
     @instance_url = options[:url]
     Rails.logger.info "OPTIONS: >>>> #{options}"
+    Rails.logger.info "Account>>>> #{@account.min_id}"
     fetch_outbox!
   end
 
