@@ -24,7 +24,7 @@ class ActivitypubOutbox
     end
   end
 
-  def initialize(uri, min_id = 0)
+  def initialize(uri, min_id = nil)
     @username, @domain = uri.split('@')
     @min_id = min_id
     Rails.logger.info "ACPUB>> #{uri} :: #{min_id}"
@@ -58,7 +58,7 @@ class ActivitypubOutbox
 
   # https://staging.moth.social/users/jtomchak/outbox?min_id=0&page=true
   def standard_url
-    if @min_id.zero?
+    if @min_id.nil?
       "https://#{@domain}/users/#{@username}/outbox?page=true"
     else
       "https://#{@domain}/users/#{@username}/outbox?min_id=#{@min_id}&page=true"
