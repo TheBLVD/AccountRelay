@@ -20,6 +20,6 @@ Account Relay operates as a standard relay relationship with an instance, but wi
 
 **The Promise of Personalized Content**
 
-With Account Relay, we believe the "Personal For You" feed will revolutionize content discovery in the fediverse. Users can now find relevant and engaging content, specific to their interests, without the hassle of manually following numerous accounts. As we continue to refine and develop this feature, we are committed to improving the fediverse experience for all its awesome users.
+With Account Relay, we believe the "Personal For You" feed will dramaticly improve content discovery in the fediverse. Users can now find relevant and engaging content, specific to their interests, for accounts and content they may not otherwise see or know about. As we continue to refine and develop this feature, we are committed to improving the fediverse experience for all its awesome users.
 
 In conclusion, Account Relay marks a significant step forward in creating a more personalized and enjoyable fediverse experience. By connecting users to content from accounts aligning with their interests, we hope to foster a stronger sense of community and make content discovery a seamless and delightful process for everyone. As we move forward, we eagerly anticipate the positive impact of Account Relay and are committed to pushing the boundaries of what the fediverse can achieve.
