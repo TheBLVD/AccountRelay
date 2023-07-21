@@ -20,6 +20,10 @@ Account Relay operates as a standard relay relationship with an instance, but wi
 
 ![](https://jessetomchak.com/uploads/2023/accountrelay-process.png)
 
+**Privacy and Data**
+
+We take concerns about privacy and tracking seriously. Additionally, we believe the current set of tooling and ecosystem is unwelcoming and discouraging to new users in the fediverse communities. For Mammoth users, with a public social graph, we run a social graph search for the public following of the user's followers. What is persisted is the Mammoth's username and the generated list of usernames, not full account profiles or other connections. This data is used on the Account Relay service to send new statuses to Moth.Social. Account Relay holds the most recent status id fetched for each account and uses it to ask for only new statuses.
+
 **The Promise of Personalized Content**
 
 With Account Relay, we believe this personalized For You feed is a great first steps towards dramatically improved content discovery in the fediverse. Users can now find relevant and engaging content, specific to their interests, for accounts and content they may not otherwise see or know about. As we continue to refine and develop this feature, we are committed to improving the fediverse experience for everyone.
