@@ -111,6 +111,7 @@ GEM
       libddwaf (~> 1.9.0.0.0)
       msgpack
     debase-ruby_core_source (3.2.1)
+    dogstatsd-ruby (5.6.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.8.1)
@@ -344,6 +345,7 @@ DEPENDENCIES
   capistrano-rbenv (~> 2.2)
   capybara (>= 3.26)
   ddtrace
+  dogstatsd-ruby (~> 5.6)
   dotenv-rails
   ed25519 (>= 1.2, < 2.0)
   http (~> 5.1)
