@@ -9,6 +9,7 @@ Datadog.configure do |c|
   c.tracing.sampling.default_rate = 1.0
   c.profiling.enabled = true
   c.appsec.enabled = true
+  c.runtime_metrics.enabled = true
   # Optionally, you can configure the DogStatsD instance used for sending runtime metrics.
   # DogStatsD is automatically configured with default settings if `dogstatsd-ruby` is available.
   # You can configure with host and port of Datadog agent; defaults to 'localhost:8125'.

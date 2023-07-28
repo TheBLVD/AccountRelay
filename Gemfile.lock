@@ -131,6 +131,8 @@ GEM
       raabro (~> 1.4)
     globalid (1.1.0)
       activesupport (>= 5.0)
+    google-protobuf (3.23.4-arm64-darwin)
+    google-protobuf (3.23.4-x86_64-linux)
     htmlentities (4.3.4)
     http (5.1.1)
       addressable (~> 2.8)
@@ -348,6 +350,7 @@ DEPENDENCIES
   dogstatsd-ruby (~> 5.6)
   dotenv-rails
   ed25519 (>= 1.2, < 2.0)
+  google-protobuf (~> 3.0)
   http (~> 5.1)
   http_accept_language (~> 2.1)
   httplog (~> 1.6.2)
