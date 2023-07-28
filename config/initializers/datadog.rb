@@ -16,7 +16,7 @@ Datadog.configure do |c|
 end
 
 logger = Logger.new(STDOUT)
-logger.progname = 'my_app'
+logger.progname = 'account-relay'
 logger.formatter = proc do |severity, datetime, progname, msg|
   "[#{datetime}][#{progname}][#{severity}][#{Datadog::Tracing.log_correlation}] #{msg}\n"
 end
