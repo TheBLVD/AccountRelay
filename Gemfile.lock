@@ -105,6 +105,12 @@ GEM
     connection_pool (2.3.0)
     crass (1.0.6)
     date (3.3.3)
+    ddtrace (1.12.1)
+      debase-ruby_core_source (= 3.2.1)
+      libdatadog (~> 2.0.0.1.0)
+      libddwaf (~> 1.9.0.0.0)
+      msgpack
+    debase-ruby_core_source (3.2.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.8.1)
@@ -154,6 +160,12 @@ GEM
       json-ld (~> 3.2)
       rdf (~> 3.2)
     jsonapi-renderer (0.2.2)
+    libdatadog (2.0.0.1.0)
+    libdatadog (2.0.0.1.0-x86_64-linux)
+    libddwaf (1.9.0.0.1-arm64-darwin)
+      ffi (~> 1.0)
+    libddwaf (1.9.0.0.1-x86_64-linux)
+      ffi (~> 1.0)
     link_header (0.0.8)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -331,6 +343,7 @@ DEPENDENCIES
   capistrano-rails (~> 1.1.0)
   capistrano-rbenv (~> 2.2)
   capybara (>= 3.26)
+  ddtrace
   dotenv-rails
   ed25519 (>= 1.2, < 2.0)
   http (~> 5.1)

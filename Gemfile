@@ -45,6 +45,9 @@ gem 'redis'
 gem 'sidekiq'
 gem 'sidekiq-scheduler', '~> 4.0'
 
+# Datadog
+gem 'ddtrace', require: 'ddtrace/auto_instrument'
+
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
