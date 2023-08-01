@@ -9,13 +9,13 @@ class FetchRemoteStatusesService < BaseService
       @account = account
       @username = @account.username
       @domain   = @account.domain
+      # Rails.logger.info "Account>>>> #{@account.min_id}"
     else
       @username, @domain = account.strip.gsub(/\A@/, '').split('@')
       @account = Account.where(username: @username, domain: @domain).first
     end
     @instance_url = options[:url]
     Rails.logger.info "OPTIONS: >>>> #{options}"
-    Rails.logger.info "Account>>>> #{@account.min_id}"
     fetch_outbox!
   end
 

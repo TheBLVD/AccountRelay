@@ -82,6 +82,10 @@ Rails.application.configure do
   config.active_job.queue_name_prefix = "account_relay#{Rails.env}"
   config.active_job.queue_adapter = :sidekiq
 
+  # Logging
+  config.logger = Logger.new(STDOUT)
+  config.logger.level = Logger::DEBUG
+
   module PrivateAddressCheck
     def self.private_address?(*)
       false
