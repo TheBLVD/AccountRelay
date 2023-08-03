@@ -86,12 +86,23 @@ Rails.application.configure do
 
   # Use a different logger for distributed setups.
   # require "syslog/logger"
-  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-
-  if ENV['RAILS_LOG_TO_STDOUT'].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
+  ActiveSupport::Logger.new(STDOUT).tap do |logger|
     logger.formatter = config.log_formatter
-    config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    config.logger = ActiveSupport::TaggedLogging.new(logger)
+  end
+
+  # Use the lowest log level to ensure availability of diagnostic information
+  # when problems arise.
+  config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'info').to_sym
+
+  # Prepend all log lines with the following tags.
+  config.log_tags = [:request_id]
+
+  # Better log formatting
+  config.lograge.enabled = true
+
+  config.lograge.custom_payload do |controller|
+    { key: controller.signature_key_id } if controller.respond_to?(:signed_request?) && controller.signed_request?
   end
 
   # Do not dump schema after migrations.

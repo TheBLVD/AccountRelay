@@ -46,9 +46,14 @@ gem 'sidekiq'
 gem 'sidekiq-scheduler', '~> 4.0'
 
 # Datadog
-gem 'ddtrace', require: 'ddtrace/auto_instrument'
-gem 'dogstatsd-ruby', '~> 5.6'
-gem 'google-protobuf', '~> 3.0'
+
+group :production, :staging do
+  gem 'lograge', '~> 0.12'
+  gem 'google-protobuf', '~> 3.0'
+  gem 'ddtrace', require: 'ddtrace/auto_instrument'
+  gem 'dogstatsd-ruby', '~> 5.6'
+  gem 'google-protobuf', '~> 3.0'
+end
 
 
 group :development, :test do
