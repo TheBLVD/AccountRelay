@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_18_212222) do
+ActiveRecord::Schema.define(version: 2023_08_03_175317) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -38,6 +38,19 @@ ActiveRecord::Schema.define(version: 2023_07_18_212222) do
     t.string "key"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "username"
+    t.string "domain"
+    t.boolean "discoverable"
+    t.string "display_name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "domain_id", null: false
+    t.integer "following_count", default: 0
+    t.integer "followers_count", default: 0
+    t.index ["username", "domain"], name: "index_users_on_username_and_domain", unique: true
   end
 
   add_foreign_key "accounts", "instances"

@@ -8,7 +8,9 @@ class ActivitypubOutbox
 
     def initialize(uri, body)
       @uri  = uri
-      @json = Oj.load(body, mode: :strict)
+      @json = Oj.load(body, symbol_keys: true)
+
+      @json
     end
 
     def subject

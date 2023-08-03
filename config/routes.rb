@@ -10,6 +10,12 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :accounts, only: %i[create destroy index]
+      # foryou
+      namespace :foryou do
+        resources :users, param: :acct, only: %i[create show] do
+          get 'following', on: :member
+        end
+      end
     end
   end
 end
