@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_03_175317) do
+ActiveRecord::Schema.define(version: 2023_08_03_223805) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -28,6 +28,13 @@ ActiveRecord::Schema.define(version: 2023_08_03_175317) do
     t.index ["instance_id"], name: "index_accounts_on_instance_id"
     t.index ["owner", "handle"], name: "index_accounts_on_owner_and_handle", unique: true
     t.index ["owner"], name: "index_accounts_on_owner"
+  end
+
+  create_table "follows", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.uuid "user_id", null: false
+    t.uuid "target_user_id", null: false
   end
 
   create_table "instances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -54,4 +61,6 @@ ActiveRecord::Schema.define(version: 2023_08_03_175317) do
   end
 
   add_foreign_key "accounts", "instances"
+  add_foreign_key "follows", "users"
+  add_foreign_key "follows", "users", column: "target_user_id"
 end

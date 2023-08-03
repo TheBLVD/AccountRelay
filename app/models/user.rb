@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: accounts
+# Table name: users
 #
 #  id                            :bigint(8)        not null, primary key
 #  username                      :string           default(""), not null
@@ -17,4 +17,18 @@
 
 class User < ApplicationRecord
   validates :username, uniqueness: { scope: :domain }
+
+  has_many :active_relationships,  class_name: 'Follow', foreign_key: 'user_id',        dependent: :destroy
+  has_many :passive_relationships, class_name: 'Follow', foreign_key: 'target_user_id', dependent: :destroy
+
+  has_many :following, -> { order('follows.id desc') }, through: :active_relationships,  source: :target_user
+  has_many :followers, -> { order('follows.id desc') }, through: :passive_relationships, source: :user
+
+  def follow!(other_user)
+    rel = active_relationships.find_or_create_by!(target_user: other_user)
+
+    rel.save! if rel.changed?
+
+    rel
+  end
 end
