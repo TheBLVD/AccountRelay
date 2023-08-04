@@ -14,6 +14,7 @@
 #  domain_id                     :string           user id from their domain instance
 #  followers_count               :int              number of user's following this user
 #  following_count               :int              number of user's they are following
+#  local                         :boolean          a local account was created via the api. considered a Mammoth user.
 
 class User < ApplicationRecord
   validates :username, uniqueness: { scope: :domain }

@@ -16,6 +16,8 @@ class Api::V1::Foryou::UsersController < ApiController
 
   private
 
+  # Create user if it doesn't exist
+  # If it does we want to mark it as a Mammoth Account
   def create_user
     account = remote_account(acct_param)
     User.find_or_create_by(username: account.username, domain: account.domain, discoverable: account.discoverable,
