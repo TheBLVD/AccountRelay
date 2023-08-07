@@ -1,5 +1,5 @@
 class Api::V1::Foryou::UsersController < ApiController
-  include MastodonAccountHelper
+  include MastodonHelper
   def index; end
 
   def create
