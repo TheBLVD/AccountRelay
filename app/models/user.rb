@@ -27,7 +27,7 @@ class User < ApplicationRecord
 
   def follow!(other_user)
     rel = active_relationships.find_or_create_by!(target_user: other_user)
-
+    Rails.logger.debug "SAVE_FOLLOW:: HAS_CHANGED:: #{rel.changed?}"
     rel.save! if rel.changed?
 
     rel

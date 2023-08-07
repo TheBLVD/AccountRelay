@@ -25,10 +25,8 @@ class MastodonFollowing
   end
 
   def perform
-    results = direct_follows
-    Rails.logger.debug "<<<<<<<<<<<RESULTS>>>>>>>>> #{results}"
+    direct_follows
     # Response.new(@uri, body_from_accounts)
-    results
   rescue Oj::ParseError
     raise MastodonFollowing::Error, "Invalid JSON in response for #{@uri}"
   rescue Addressable::URI::InvalidURIError

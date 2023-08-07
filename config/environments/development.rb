@@ -86,6 +86,10 @@ Rails.application.configure do
   config.logger = Logger.new(STDOUT)
   config.logger.level = Logger::DEBUG
 
+  HttpLog.configure do |config|
+    config.compact_log = true
+  end
+
   module PrivateAddressCheck
     def self.private_address?(*)
       false
