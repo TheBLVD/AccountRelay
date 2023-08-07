@@ -1,3 +1,5 @@
 class UserSerializer < ActiveModel::Serializer
-  attributes :id, :username, :domain, :updated_at
+  attributes :username, :domain, :updated_at, :display_name, :following
+
+  has_many :following, serializer: ::UserFollowingSerializer
 end

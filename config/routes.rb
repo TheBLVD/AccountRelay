@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       # foryou
       namespace :foryou do
         resources :users, param: :acct, only: %i[create show] do
-          get 'following', on: :member
+          resources :following, only: :index, controller: :following_users, constraints: { user_acct: %r{[^/]+} }
         end
       end
     end

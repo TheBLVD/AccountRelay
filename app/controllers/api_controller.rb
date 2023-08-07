@@ -2,6 +2,8 @@ class ApiController < ActionController::API
   before_action :authenticate_request
   attr_reader :current_instance
 
+  DEFAULT_USERS_LIMIT = 80
+
   private
 
   def authenticate_request
