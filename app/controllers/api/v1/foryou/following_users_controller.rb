@@ -2,11 +2,9 @@
 # /api/v1/foryou/users/:user_acct/following
 
 class Api::V1::Foryou::FollowingUsersController < ApiController
-  #   before_action :set_user
+  before_action :set_user
 
   def index
-    username, domain = user_acct_param.split('@')
-    @user = User.where(username:, domain:).first
     render json: @user
   end
 
@@ -14,7 +12,7 @@ class Api::V1::Foryou::FollowingUsersController < ApiController
 
   def set_user
     username, domain = user_acct_param.split('@')
-    @user = User.where(username:, domain:).include(:following).first
+    @user = User.where(username:, domain:).first
   end
 
   def load_users

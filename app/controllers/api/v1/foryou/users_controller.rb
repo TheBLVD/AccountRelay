@@ -8,8 +8,16 @@ class Api::V1::Foryou::UsersController < ApiController
     render json: user
   end
 
+  # Simple list of all mammoth users
+  def index
+    render json: local_users, each_serializer: SimpleUserSerializer
+  end
+
+  # User with Configuration
   def show
-    render json: { "type": 'hello' }
+    username, domain = acct_param.split('@')
+    user = User.where(username:, domain:).first
+    render json: user, serializer: ::SimpleUserSerializer
   end
 
   def destroy; end
@@ -22,6 +30,10 @@ class Api::V1::Foryou::UsersController < ApiController
     account = remote_account(acct_param)
     User.find_or_create_by(username: account.username, domain: account.domain, discoverable: account.discoverable,
                            display_name: account.display_name, domain_id: account.domain_id, followers_count: account.followers_count, following_count: account.following_count, local: true)
+  end
+
+  def local_users
+    @users = User.where(local: true)
   end
 
   def acct_param

@@ -32,4 +32,8 @@ class User < ApplicationRecord
 
     rel
   end
+
+  def acct
+    "#{username}@#{domain}"
+  end
 end
