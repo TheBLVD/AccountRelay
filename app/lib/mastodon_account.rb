@@ -27,9 +27,15 @@ class MastodonAccount
   def perform
     Response.new(@uri, body_from_accounts)
   rescue Oj::ParseError
-    raise MastodonAccount::Error, "Invalid JSON in response for #{@uri}"
+    Rails.logger.warn "Invalid JSON in response for #{@uri}"
+    nil
   rescue Addressable::URI::InvalidURIError
-    raise MastodonAccount::Error, "Invalid URI for #{@uri}"
+    # raise MastodonAccount::Error, "Invalid URI for #{@uri}"
+    Rails.logger.warn "Invalid URI for #{@uri}"
+    nil
+  rescue MastodonAccount::Error, HTTP::TimeoutError, HTTP::ConnectionError, OpenSSL::SSL::SSLError
+    Rails.logger.warn "failed for #{@uri}"
+    nil
   end
 
   private
@@ -37,6 +43,7 @@ class MastodonAccount
   def body_from_accounts(url = @uri)
     Rails.logger.info "URL REQUEST>>>: #{url}"
     accounts_request(url).perform do |res|
+      # Handling 404 errors
       raise MastodonAccount::Error, "Request for #{@uri} returned HTTP #{res.code}" unless res.code == 200
 
       res.body.to_s

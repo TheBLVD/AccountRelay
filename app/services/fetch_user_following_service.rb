@@ -24,23 +24,31 @@ class FetchUserFollowingService < BaseService
     direct_follows.each do |follows|
       user = user_from_follow(follows)
       Rails.logger.debug "USER?: #{user.inspect}"
+      return if user.nil?
+
       @user.follow!(user)
     end
   end
 end
 
-def user_from_follow(follows)
+def user_from_follow(follow)
   # create/get User
-  Rails.logger.debug "FOLLOWS?: #{follows}"
-  follows['domain'] = URI.parse(follows.url).host
-  follows_user = User.where(username: follows.username, domain: follows.domain).first
+  Rails.logger.debug "FOLLOWS?: #{follow}"
+  follow['domain'] = URI.parse(follow.url).host
+  remote_account = remote_account("#{follow.username}@#{follow.domain}")
+  return if remote_account.nil?
 
-  follows_user || User.create(username: follows.username, domain: follows.domain) do |user|
-    user.discoverable = follows.discoverable
-    user.display_name = follows.display_name
-    user.domain_id = follows.id
-    user.domain = follows.domain
-    user.followers_count = follows.followers_count
-    user.following_count = follows.following_count
+  follows_user = User.where(username: follow.username,
+                            domain: follow.domain).first
+  # Patch
+  follows_user&.update(domain_id: remote_account.domain_id)
+
+  follows_user || User.create(username: remote_account.username, domain: remote_account.domain) do |user|
+    user.discoverable = remote_account.discoverable
+    user.display_name = remote_account.display_name
+    user.domain_id = remote_account.domain_id
+    user.domain = remote_account.domain
+    user.followers_count = remote_account.followers_count
+    user.following_count = remote_account.following_count
   end
 end
