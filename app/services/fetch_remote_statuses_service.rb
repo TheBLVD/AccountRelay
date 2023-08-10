@@ -23,7 +23,7 @@ class FetchRemoteStatusesService < BaseService
   def fetch_outbox!
     min_id = @account&.min_id || nil
     outbox = outbox!("#{@username}@#{@domain}", min_id)
-    Rails.logger.info "OUTBOX>>>> #{outbox.ordered_items}"
+
     return if outbox.nil? || outbox.ordered_items.nil?
 
     outbox.ordered_items.each do |status|
@@ -46,12 +46,12 @@ class FetchRemoteStatusesService < BaseService
   end
 
   def send_announcement(status)
-    Rails.logger.info "STATUS:: #{status}"
-    return if status.dig(:object, :id).nil?
+    return if status.dig(:object).nil?
 
-    Rails.logger.info "PASSED::::: #{status[:object][:id]}"
+    # Check status object is hash or string
+    status_url = (status[:object].is_a? String) ? status[:object] : status[:object][:id]
 
-    content = announcement_payload(status[:object][:id])
+    content = announcement_payload(status_url)
     Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'
     Rails.logger.info "INSTANCE_URL: >>>> #{@instance_url} is the instance it's pushing too"
     SendMessageToInboxService.new.call(@instance_url, content)

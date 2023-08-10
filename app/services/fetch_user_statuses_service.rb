@@ -41,7 +41,9 @@ class FetchUserStatusesService < BaseService
   def send_announcement(status)
     return if status.dig(:object, :id).nil?
 
-    content = announcement_payload(status[:object][:id])
+    # Check status object is hash or string
+    status_url = (status[:object].is_a? String) ? status[:object] : status[:object][:id]
+
     Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'
     Rails.logger.info "INSTANCE_URL: >>>> #{INSTANCE_URL} is the instance it's pushing too"
     SendMessageToInboxService.new.call(INSTANCE_URL, content)
