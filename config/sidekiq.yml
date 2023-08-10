@@ -13,6 +13,10 @@
     every: <%= ENV.fetch('UPDATE_ACCOUNT_STATUSES', "30m") %>
     class: Scheduler::UpdateAccountStatusesScheduler
     queue: scheduler
+  user_statuses_scheduler:
+    every: <%= ENV.fetch('USER_STATUSES', "30m") %>
+    class: Scheduler::UpdateUserStatusesScheduler
+    queue: scheduler
 
 production:
   :concurrency: 25

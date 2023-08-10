@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+# For Each user fetch & process statuses from their respective outbox
+class UserStatusesWorker
+  include Sidekiq::Worker
+
+  sidekiq_options retry: 0
+
+  def perform(user_id)
+    FetchUserStatusesService.new.call(user_id)
+  end
+end
