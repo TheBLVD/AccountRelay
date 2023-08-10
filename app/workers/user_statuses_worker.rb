@@ -4,7 +4,7 @@
 class UserStatusesWorker
   include Sidekiq::Worker
 
-  sidekiq_options retry: 0
+  sidekiq_options queue: 'pull', retry: 0
 
   def perform(user_id)
     FetchUserStatusesService.new.call(user_id)

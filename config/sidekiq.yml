@@ -4,6 +4,7 @@
 
 :queues:
   - [default, 8]
+  - [pull]
   - [scheduler]
 
 :scheduler:
@@ -19,4 +20,4 @@
     queue: scheduler
 
 production:
-  :concurrency: 50
+  :concurrency: 5
