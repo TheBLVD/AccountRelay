@@ -45,7 +45,8 @@ gem 'redis'
 gem 'sidekiq'
 gem 'sidekiq-scheduler', '~> 4.0'
 
-# Datadog
+# Data Validation
+gem 'activerecord_json_validator', '~> 2.1.0'
 
 group :production, :staging do
   gem 'lograge', '~> 0.12'

@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "type": "object",
+  "required": [
+    "friends_of_friends",
+    "from_your_channels",
+    "curated_by_mammoth"
+  ],
+  "properties": {
+    "for_you": {
+      "friends_of_friends": { "type": "integer" },
+      "from_your_channels": { "type": "integer" },
+      "curated_by_mammoth": { "type": "integer" }
+    }
+  }
+}

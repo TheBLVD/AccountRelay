@@ -15,7 +15,7 @@ class Api::V1::Foryou::UsersController < ApiController
 
   # User with Configuration
   def show
-    username, domain = acct_param.split('@')
+    username, domain = user_params[:acct].split('@')
     user = User.where(username:, domain:).first
     render json: user, serializer: ::SimpleUserSerializer
   end
@@ -27,7 +27,7 @@ class Api::V1::Foryou::UsersController < ApiController
   # Create user if it doesn't exist
   # If it does we want to mark it as a Mammoth Account
   def create_user
-    account = remote_account(acct_param)
+    account = remote_account(user_params)
     User.find_or_create_by(username: account.username, domain: account.domain, discoverable: account.discoverable,
                            display_name: account.display_name, domain_id: account.domain_id, followers_count: account.followers_count, following_count: account.following_count, local: true)
   end
@@ -38,5 +38,14 @@ class Api::V1::Foryou::UsersController < ApiController
 
   def acct_param
     params.require(:acct)
+  end
+
+  def user_params
+    params.require(:acct)
+          .permit(
+            :curated_by_mammoth,
+            :friends_of_friends,
+            :from_your_channels
+          )
   end
 end

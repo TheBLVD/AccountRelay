@@ -17,6 +17,10 @@
 #  local                         :boolean          a local account was created via the api. considered a Mammoth user.
 
 class User < ApplicationRecord
+  serialize :for_you_settings, JsonbSerializers
+
+  FOR_YOU_SETTINGS_SCHEMA = "#{Rails.root}/app/models/schemas/user_for_you_settings.json"
+  validates :for_you_settings, presence: true, json: { message: ->(errors) { errors }, schema: FOR_YOU_SETTINGS_SCHEMA }
   validates :username, uniqueness: { scope: :domain }
 
   has_many :active_relationships,  class_name: 'Follow', foreign_key: 'user_id',        dependent: :destroy
