@@ -36,9 +36,9 @@ class ActivitypubOutbox
   def perform
     Response.new(@uri, body_from_outbox)
   rescue Oj::ParseError
-    raise ActivityPubOutbox::Error, "Invalid JSON in response for #{@uri}"
+    raise Error, "Invalid JSON in response for #{@uri}"
   rescue Addressable::URI::InvalidURIError
-    raise ActivityPubOutbox::Error, "Invalid URI for #{@uri}"
+    raise Error, "Invalid URI for #{@uri}"
   rescue StandardError => e
     Rails.logger.warn "Unable to fetch statuses:: #{e.message}"
     nil
