@@ -16,6 +16,7 @@ class FetchUserStatusesService < BaseService
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
     outbox = outbox!("#{@user.username}@#{@user.domain}")
+
     outbox.ordered_items.each do |status|
       send_announcement(status)
     end
@@ -37,7 +38,9 @@ class FetchUserStatusesService < BaseService
   end
 
   def send_announcement(status)
-    content = announcement_payload(status['object']['id'])
+    return if status.dig('object', 'id').nil?
+
+    content = announcement_payload(status[:object][:id])
     Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'
     Rails.logger.info "INSTANCE_URL: >>>> #{INSTANCE_URL} is the instance it's pushing too"
     SendMessageToInboxService.new.call(INSTANCE_URL, content)

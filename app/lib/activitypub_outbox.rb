@@ -9,20 +9,18 @@ class ActivitypubOutbox
     def initialize(uri, body)
       @uri  = uri
       @json = Oj.load(body, symbol_keys: true)
-
-      @json
     end
 
     def subject
-      @json['subject']
+      @json[:subject]
     end
 
     def ordered_items
-      @json['orderedItems']
+      @json[:orderedItems]
     end
 
     def prev
-      @json['prev']
+      @json[:prev]
     end
   end
 

@@ -21,7 +21,8 @@ class FetchRemoteStatusesService < BaseService
 
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
-    outbox = outbox!("#{@username}@#{@domain}", @account.min_id)
+    min_id = @account&.min_id || nil
+    outbox = outbox!("#{@username}@#{@domain}", min_id)
     outbox.ordered_items.each do |status|
       send_announcement(status)
     end
@@ -42,7 +43,12 @@ class FetchRemoteStatusesService < BaseService
   end
 
   def send_announcement(status)
-    content = announcement_payload(status['object']['id'])
+    Rails.logger.debug "STATUS:: #{status}"
+    return if status.dig('object', 'id').nil?
+
+    Rails.logger.debug "STATUS:: #{status[:object][:id]}"
+
+    content = announcement_payload(status[:object][:id])
     Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'
     Rails.logger.info "INSTANCE_URL: >>>> #{@instance_url} is the instance it's pushing too"
     SendMessageToInboxService.new.call(@instance_url, content)
@@ -51,14 +57,14 @@ class FetchRemoteStatusesService < BaseService
   def announcement_payload(status_url)
     @relay = 'https://acctrelay.moth.social'
     {
-      "@context": 'https://www.w3.org/ns/activitystreams',
-      'actor': "#{@relay}/actor",
-      'id': "#{@relay}/activities/#{SecureRandom.uuid}",
-      'type': 'Announce',
-      'object': {
-        'id': status_url.to_s
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      actor: "#{@relay}/actor",
+      id: "#{@relay}/activities/#{SecureRandom.uuid}",
+      type: 'Announce',
+      object: {
+        id: status_url.to_s
       },
-      "to": [
+      to: [
         "#{@relay}/followers"
       ]
     }
