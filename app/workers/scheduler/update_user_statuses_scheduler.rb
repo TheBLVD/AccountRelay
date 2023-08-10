@@ -11,14 +11,13 @@ class Scheduler::UpdateUserStatusesScheduler
   sidekiq_options retry: 0
 
   def perform
-    users.each do |user_id|
-      UserStatusesWorker.perform_async(user_id)
-    end
+    # defaults to a 1_000 into redis at a time
+    UserStatusesWorker.perform_bulk(users)
   end
 
   private
 
   def users
-    User.all.pluck(:id)
+    User.all.pluck(:id).zip
   end
 end

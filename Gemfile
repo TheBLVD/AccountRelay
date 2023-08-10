@@ -44,6 +44,8 @@ gem 'bootsnap', '>= 1.4.4', require: false
 gem 'redis'
 gem 'sidekiq'
 gem 'sidekiq-scheduler', '~> 4.0'
+gem 'sidekiq-unique-jobs', '~> 7.1'
+gem 'sidekiq-bulk', '~> 0.2.0'
 
 # Data Validation
 gem 'activerecord_json_validator', '~> 2.1.0'
