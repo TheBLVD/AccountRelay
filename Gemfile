@@ -53,7 +53,6 @@ group :production, :staging do
   gem 'google-protobuf', '~> 3.0'
   gem 'ddtrace', require: 'ddtrace/auto_instrument'
   gem 'dogstatsd-ruby', '~> 5.6'
-  gem 'google-protobuf', '~> 3.0'
 end
 
 
