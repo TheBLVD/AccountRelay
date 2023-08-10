@@ -39,6 +39,9 @@ class ActivitypubOutbox
     raise ActivityPubOutbox::Error, "Invalid JSON in response for #{@uri}"
   rescue Addressable::URI::InvalidURIError
     raise ActivityPubOutbox::Error, "Invalid URI for #{@uri}"
+  rescue StandardError => e
+    Rails.logger.warn "Unable to fetch statuses:: #{e.message}"
+    nil
   end
 
   private
@@ -46,7 +49,7 @@ class ActivitypubOutbox
   def body_from_outbox(url = standard_url)
     Rails.logger.info "URL REQUEST>>>: #{url}"
     outbox_request(url).perform do |res|
-      raise ActivityPubOutbox::Error, "Request for #{@uri} returned HTTP #{res.code}" unless res.code == 200
+      raise Error, "Request for #{url} returned HTTP #{res.code}" unless res.code == 200
 
       res.body.to_s
     end

@@ -16,6 +16,7 @@ class FetchUserStatusesService < BaseService
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
     outbox = outbox!("#{@user.username}@#{@user.domain}")
+    return if outbox.nil? || outbox.ordered_items.nil?
 
     outbox.ordered_items.each do |status|
       send_announcement(status)
