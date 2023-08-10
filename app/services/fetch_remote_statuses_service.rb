@@ -46,10 +46,10 @@ class FetchRemoteStatusesService < BaseService
   end
 
   def send_announcement(status)
-    Rails.logger.debug "STATUS:: #{status}"
+    Rails.logger.info "STATUS:: #{status}"
     return if status.dig(:object, :id).nil?
 
-    Rails.logger.debug "PASSED::::: #{status[:object][:id]}"
+    Rails.logger.info "PASSED::::: #{status[:object][:id]}"
 
     content = announcement_payload(status[:object][:id])
     Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'
