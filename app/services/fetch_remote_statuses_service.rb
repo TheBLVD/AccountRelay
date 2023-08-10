@@ -23,6 +23,7 @@ class FetchRemoteStatusesService < BaseService
   def fetch_outbox!
     min_id = @account&.min_id || nil
     outbox = outbox!("#{@username}@#{@domain}", min_id)
+    Rails.logger.info "OUTBOX>>>> #{outbox.ordered_items}"
     return if outbox.nil? || outbox.ordered_items.nil?
 
     outbox.ordered_items.each do |status|
@@ -46,9 +47,9 @@ class FetchRemoteStatusesService < BaseService
 
   def send_announcement(status)
     Rails.logger.debug "STATUS:: #{status}"
-    return if status.dig('object', 'id').nil?
+    return if status.dig(:object, :id).nil?
 
-    Rails.logger.debug "STATUS:: #{status[:object][:id]}"
+    Rails.logger.debug "PASSED::::: #{status[:object][:id]}"
 
     content = announcement_payload(status[:object][:id])
     Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'

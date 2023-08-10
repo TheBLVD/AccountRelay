@@ -39,7 +39,7 @@ class FetchUserStatusesService < BaseService
   end
 
   def send_announcement(status)
-    return if status.dig('object', 'id').nil?
+    return if status.dig(:object, :id).nil?
 
     content = announcement_payload(status[:object][:id])
     Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'
