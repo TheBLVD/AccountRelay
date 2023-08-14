@@ -6,6 +6,10 @@ class ApiController < ActionController::API
 
   private
 
+  rescue_from ActiveRecord::RecordInvalid do |e|
+    render json: { error: { RecordInvalid: e.record.errors } }, status: 406
+  end
+
   rescue_from ActiveRecord::RecordNotFound do |_exception|
     not_found
   end

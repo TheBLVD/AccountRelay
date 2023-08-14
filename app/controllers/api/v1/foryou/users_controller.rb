@@ -1,9 +1,7 @@
 class Api::V1::Foryou::UsersController < ApiController
   include MastodonHelper
-  before_action :set_user, only: %i[index show update]
+  before_action :set_user, only: %i[show]
   before_action :cast_params, only: %i[update]
-
-  def index; end
 
   def create
     user = create_user
@@ -18,7 +16,7 @@ class Api::V1::Foryou::UsersController < ApiController
 
   # User with Configuration
   def show
-    render json: @user, serializer: ::SimpleUserSerializer
+    render json: @user, serializer: ::AdvanceUserSerializer
   end
 
   # User Configuration
@@ -44,12 +42,6 @@ class Api::V1::Foryou::UsersController < ApiController
     account = remote_account(user_params)
     User.find_or_create_by(username: account.username, domain: account.domain, discoverable: account.discoverable,
                            display_name: account.display_name, domain_id: account.domain_id, followers_count: account.followers_count, following_count: account.following_count, local: true)
-  end
-
-  def update_for_you_settings
-    current_settings = @user.for_you_settings
-    new_settings = current_settings.merge(for_you_params)
-    @user.update(for_you_settings: new_settings)
   end
 
   def local_users
