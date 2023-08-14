@@ -46,10 +46,9 @@ class FetchRemoteStatusesService < BaseService
   end
 
   def send_announcement(status)
-    return if status.dig(:object).nil?
-
     # Check status object is hash or string
     status_url = (status[:object].is_a? String) ? status[:object] : status[:object][:id]
+    return if status_url.nil?
 
     content = announcement_payload(status_url)
     Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'
