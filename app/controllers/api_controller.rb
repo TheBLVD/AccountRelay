@@ -6,6 +6,10 @@ class ApiController < ActionController::API
 
   private
 
+  rescue_from ActiveRecord::RecordNotFound do |_exception|
+    not_found
+  end
+
   def authenticate_request
     @current_instance = AuthorizeApiRequestService.new.call(request.headers)
     render json: { error: 'Not Authorized' }, status: 401 unless @current_instance

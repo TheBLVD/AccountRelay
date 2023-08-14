@@ -18,8 +18,9 @@
 
 class User < ApplicationRecord
   serialize :for_you_settings, JsonbSerializers
+  store_accessor :curated_by_mammoth, :friends_of_friends, :from_your_channels
 
-  FOR_YOU_SETTINGS_SCHEMA = "#{Rails.root}/app/models/schemas/user_for_you_settings.json"
+  FOR_YOU_SETTINGS_SCHEMA = Rails.root.join('app', 'models', 'schemas', 'user_for_you_settings.json')
   validates :for_you_settings, presence: true, json: { message: ->(errors) { errors }, schema: FOR_YOU_SETTINGS_SCHEMA }
   validates :username, uniqueness: { scope: :domain }
 
@@ -28,6 +29,8 @@ class User < ApplicationRecord
 
   has_many :following, -> { order('follows.id desc') }, through: :active_relationships,  source: :target_user
   has_many :followers, -> { order('follows.id desc') }, through: :passive_relationships, source: :user
+
+  after_find :set_defaults
 
   def follow!(other_user)
     rel = active_relationships.find_or_create_by!(target_user: other_user)
@@ -39,5 +42,18 @@ class User < ApplicationRecord
 
   def acct
     "#{username}@#{domain}"
+  end
+
+  # Settings will be off, low, med, high
+  # So the enum 0-3 to match
+  def set_defaults
+    return unless for_you_settings.empty?
+
+    self.for_you_settings = {
+      curated_by_mammoth: 3,
+      friends_of_friends: 3,
+      from_your_channels: 3,
+      type: 'personal'
+    }
   end
 end

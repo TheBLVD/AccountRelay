@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "required": [
     "friends_of_friends",
@@ -7,10 +7,8 @@
     "curated_by_mammoth"
   ],
   "properties": {
-    "for_you": {
-      "friends_of_friends": { "type": "integer" },
-      "from_your_channels": { "type": "integer" },
-      "curated_by_mammoth": { "type": "integer" }
-    }
+    "friends_of_friends": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "from_your_channels": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "curated_by_mammoth": { "type": "integer", "minimum": 0, "maximum": 3 }
   }
 }

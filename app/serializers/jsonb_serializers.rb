@@ -4,6 +4,12 @@ class JsonbSerializers
   end
 
   def self.load(hash)
-    (hash || {}).with_indifferent_access
+    if hash.nil?
+      {}
+    elsif hash.is_a?(Hash) && hash.empty?
+      hash
+    else
+      JSON.parse(hash)
+    end.with_indifferent_access
   end
 end

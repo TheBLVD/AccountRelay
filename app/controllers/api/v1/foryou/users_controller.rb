@@ -1,5 +1,8 @@
 class Api::V1::Foryou::UsersController < ApiController
   include MastodonHelper
+  before_action :set_user, only: %i[index show update]
+  before_action :cast_params, only: %i[update]
+
   def index; end
 
   def create
@@ -15,8 +18,14 @@ class Api::V1::Foryou::UsersController < ApiController
 
   # User with Configuration
   def show
-    username, domain = user_params[:acct].split('@')
-    user = User.where(username:, domain:).first
+    render json: @user, serializer: ::SimpleUserSerializer
+  end
+
+  # User Configuration
+  def update
+    user = UpdateUserSettings.new(for_you_params).call
+    Rails.logger.debug user
+
     render json: user, serializer: ::SimpleUserSerializer
   end
 
@@ -24,12 +33,23 @@ class Api::V1::Foryou::UsersController < ApiController
 
   private
 
+  def set_user
+    username, domain = acct_param.split('@')
+    @user = User.where(username:, domain:).first!
+  end
+
   # Create user if it doesn't exist
   # If it does we want to mark it as a Mammoth Account
   def create_user
     account = remote_account(user_params)
     User.find_or_create_by(username: account.username, domain: account.domain, discoverable: account.discoverable,
                            display_name: account.display_name, domain_id: account.domain_id, followers_count: account.followers_count, following_count: account.following_count, local: true)
+  end
+
+  def update_for_you_settings
+    current_settings = @user.for_you_settings
+    new_settings = current_settings.merge(for_you_params)
+    @user.update(for_you_settings: new_settings)
   end
 
   def local_users
@@ -40,12 +60,18 @@ class Api::V1::Foryou::UsersController < ApiController
     params.require(:acct)
   end
 
-  def user_params
-    params.require(:acct)
-          .permit(
-            :curated_by_mammoth,
-            :friends_of_friends,
-            :from_your_channels
-          )
+  def for_you_params
+    params.permit(
+      :acct,
+      :curated_by_mammoth,
+      :friends_of_friends,
+      :from_your_channels
+    )
+  end
+
+  def cast_params
+    params[:curated_by_mammoth] = params[:curated_by_mammoth].to_i
+    params[:friends_of_friends]  = params[:friends_of_friends].to_i
+    params[:from_your_channels]  = params[:from_your_channels].to_i
   end
 end

@@ -17,7 +17,7 @@ Rails.application.routes.draw do
       resources :accounts, only: %i[create destroy index]
       # foryou
       namespace :foryou do
-        resources :users, param: :acct, only: %i[create show index], constraints: { acct: %r{[^/]+} } do
+        resources :users, param: :acct, only: %i[create show index update], constraints: { acct: %r{[^/]+} } do
           resources :following, only: :index, controller: :following_users, constraints: { user_acct: %r{[^/]+} }
         end
       end
