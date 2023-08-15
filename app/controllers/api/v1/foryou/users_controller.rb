@@ -58,7 +58,8 @@ class Api::V1::Foryou::UsersController < ApiController
       :acct,
       :curated_by_mammoth,
       :friends_of_friends,
-      :from_your_channels
+      :from_your_channels,
+      :your_follows
     )
   end
 
@@ -67,5 +68,6 @@ class Api::V1::Foryou::UsersController < ApiController
     params[:curated_by_mammoth] = params[:curated_by_mammoth].present? ? params[:curated_by_mammoth].to_i : nil
     params[:friends_of_friends]  = params[:friends_of_friends].present? ? params[:friends_of_friends].to_i : nil
     params[:from_your_channels]  = params[:from_your_channels].present? ? params[:from_your_channels].to_i : nil
+    params[:your_follows] = params[:your_follows].present? ? params[:your_follows].to_i : nil
   end
 end

@@ -18,7 +18,7 @@
 
 class User < ApplicationRecord
   serialize :for_you_settings, JsonbSerializers
-  store_accessor :curated_by_mammoth, :friends_of_friends, :from_your_channels
+  store_accessor :curated_by_mammoth, :friends_of_friends, :from_your_channels, :your_follows
 
   FOR_YOU_SETTINGS_SCHEMA = Rails.root.join('app', 'models', 'schemas', 'user_for_you_settings.json')
   validates :for_you_settings, presence: true, json: { message: ->(errors) { errors }, schema: FOR_YOU_SETTINGS_SCHEMA }
@@ -53,6 +53,7 @@ class User < ApplicationRecord
       curated_by_mammoth: 3,
       friends_of_friends: 3,
       from_your_channels: 3,
+      your_follows: 3,
       type: local? ? 'personal' : 'public',
       status: 'idle'
     }
