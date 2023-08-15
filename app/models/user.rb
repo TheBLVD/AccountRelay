@@ -53,7 +53,7 @@ class User < ApplicationRecord
       curated_by_mammoth: 3,
       friends_of_friends: 3,
       from_your_channels: 3,
-      type: 'personal',
+      type: local? ? 'personal' : 'public',
       status: 'idle'
     }
   end
