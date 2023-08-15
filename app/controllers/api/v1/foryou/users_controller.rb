@@ -16,7 +16,7 @@ class Api::V1::Foryou::UsersController < ApiController
 
   # User with Configuration
   def show
-    render json: @user, serializer: ::AdvanceUserSerializer
+    render json: @user, serializer: AdvanceUserSerializer
   end
 
   # User Configuration
@@ -24,7 +24,7 @@ class Api::V1::Foryou::UsersController < ApiController
     user = UpdateUserSettings.new(for_you_params).call
     Rails.logger.debug user
 
-    render json: user, serializer: ::SimpleUserSerializer
+    render json: user, serializer: AdvanceUserSerializer
   end
 
   def destroy; end
