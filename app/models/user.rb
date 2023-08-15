@@ -46,16 +46,16 @@ class User < ApplicationRecord
 
   # Settings will be off, low, med, high
   # So the enum 0-3 to match
+  # hash[:key] = 0 unless hash.has_key?(:key)
   def set_defaults
-    return unless for_you_settings.empty?
+    Rails.logger.debug 'SETTING DEFAULTS'
+    for_you_settings[:type] = local? ? 'personal' : 'public'
+    for_you_settings[:status] = 'idle' unless for_you_settings.has_key?(:status)
 
-    self.for_you_settings = {
-      curated_by_mammoth: 3,
-      friends_of_friends: 3,
-      from_your_channels: 3,
-      your_follows: 3,
-      type: local? ? 'personal' : 'public',
-      status: 'idle'
-    }
+    # Feed Settings
+    for_you_settings[:curated_by_mammoth] = 3 unless for_you_settings.has_key?(:curated_by_mammoth)
+    for_you_settings[:friends_of_friends] = 3 unless for_you_settings.has_key?(:friends_of_friends)
+    for_you_settings[:from_your_channels] = 3 unless for_you_settings.has_key?(:from_your_channels)
+    for_you_settings[:your_follows] = 3 unless for_you_settings.has_key?(:your_follows)
   end
 end

@@ -9,8 +9,8 @@
   ],
   "properties": {
     "friends_of_friends": { "type": "integer", "minimum": 0, "maximum": 3 },
-    "your_follows": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "from_your_channels": { "type": "integer", "minimum": 0, "maximum": 3 },
     "curated_by_mammoth": { "type": "integer", "minimum": 0, "maximum": 3 },
-    "from_your_follows": { "type": "integer", "minimum": 0, "maximum": 3 }
+    "your_follows": { "type": "integer", "minimum": 0, "maximum": 3 }
   }
 }
