@@ -21,6 +21,7 @@ class Api::V1::Foryou::UsersController < ApiController
 
   # User Configuration
   def update
+    Rails.logger.debug "PARAMS: #{for_you_params}"
     user = UpdateUserSettings.new(for_you_params).call
     Rails.logger.debug user
 
@@ -61,9 +62,10 @@ class Api::V1::Foryou::UsersController < ApiController
     )
   end
 
+  # If follow params are present cast to integer, otherwise nil
   def cast_params
-    params[:curated_by_mammoth] = params[:curated_by_mammoth].to_i
-    params[:friends_of_friends]  = params[:friends_of_friends].to_i
-    params[:from_your_channels]  = params[:from_your_channels].to_i
+    params[:curated_by_mammoth] = params[:curated_by_mammoth].present? ? params[:curated_by_mammoth].to_i : nil
+    params[:friends_of_friends]  = params[:friends_of_friends].present? ? params[:friends_of_friends].to_i : nil
+    params[:from_your_channels]  = params[:from_your_channels].present? ? params[:from_your_channels].to_i : nil
   end
 end
