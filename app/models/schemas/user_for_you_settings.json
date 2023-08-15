@@ -3,9 +3,9 @@
   "type": "object",
   "required": [
     "friends_of_friends",
+    "from_your_channels",
     "your_follows",
-    "curated_by_mammoth",
-    "from_your_follows"
+    "curated_by_mammoth"
   ],
   "properties": {
     "friends_of_friends": { "type": "integer", "minimum": 0, "maximum": 3 },
