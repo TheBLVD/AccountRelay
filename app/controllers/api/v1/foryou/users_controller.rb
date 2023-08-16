@@ -56,6 +56,7 @@ class Api::V1::Foryou::UsersController < ApiController
   def for_you_params
     params.permit(
       :acct,
+      :status,
       :curated_by_mammoth,
       :friends_of_friends,
       :from_your_channels,
