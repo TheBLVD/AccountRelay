@@ -40,8 +40,8 @@ def user_from_follow(follow)
 
   follows_user = User.where(username: follow.username,
                             domain: follow.domain).first
-  # Patch
-  follows_user&.update(domain_id: remote_account.domain_id)
+  # Patch for rewriting local id -> domain_id
+  # follows_user&.update(domain_id: remote_account.domain_id)
 
   follows_user || User.create(username: remote_account.username, domain: remote_account.domain) do |user|
     user.discoverable = remote_account.discoverable
