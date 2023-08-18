@@ -4,7 +4,7 @@
 # TODO: for a given min_id (ie the last successful status retrived and sent)
 class FetchUserStatusesService < BaseService
   include ActivitypubOutboxHelper
-  INSTANCE_URL = 'https://staging.moth.social'
+  INSTANCE_URL = 'https://moth.social'
 
   def call(user_id, options = {})
     @user = User.find(user_id)
