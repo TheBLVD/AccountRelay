@@ -4,32 +4,37 @@
 # TODO: for a given min_id (ie the last successful status retrived and sent)
 class FetchUserStatusesService < BaseService
   include ActivitypubOutboxHelper
-  INSTANCE_URL = 'https://moth.social'
+  INSTANCE_URL = 'https://staging.moth.social'
 
-  def call(user_id, options = {})
+  def call(user_id, _options = {})
     @user = User.find(user_id)
+    @status_min_id = StatusManager.instance.fetch_min_id(user_id)
 
-    Rails.logger.info "OPTIONS: >>>> #{options}"
+    Rails.logger.info "OPTIONS: >>>> #{@status_min_id}"
     fetch_outbox!
   end
 
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
-    outbox = outbox!("#{@user.username}@#{@user.domain}")
+    outbox = outbox!("#{@user.username}@#{@user.domain}", @status_min_id)
     return if outbox.nil? || outbox.ordered_items.nil?
 
-    outbox.ordered_items.each do |status|
+    if @status_min_id.nil?
+      Rails.logger.info 'NO MIN_ID FOUND: SEND ONLY MOST RECENT STATUS'
+      status = outbox.ordered_items.first
       send_announcement(status)
+    else
+      outbox.ordered_items.each do |status|
+        send_announcement(status)
+      end
     end
-    Rails.logger.info "PREV>>>> #{outbox.prev}"
 
-    # Update min_id for account
     return if outbox.prev.nil?
 
+    # Update min_id for account
+    Rails.logger.info "PREV>>>> #{outbox.prev}"
     min_id = min_id_param(outbox.prev)
-    # TODO: Add min_id to user's table
-    # Rails.logger.info "UPDATE_MIN_ID: >>>> #{min_id}"
-    # @account.update(min_id:)
+    StatusManager.instance.update_min_id(@user.id, min_id)
   end
 
   def min_id_param(url)
@@ -45,8 +50,7 @@ class FetchUserStatusesService < BaseService
 
     content = announcement_payload(status_url)
 
-    Rails.logger.info 'ANNOUNCMENT_CONTENT: >>>>'
-    Rails.logger.info "INSTANCE_URL: >>>> #{INSTANCE_URL} is the instance it's pushing too"
+    Rails.logger.info "ANNOUNCMENT_CONTENT: >>>> #{status_url}"
     SendMessageToInboxService.new.call(INSTANCE_URL, content)
   end
 

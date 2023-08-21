@@ -46,6 +46,8 @@ gem 'sidekiq'
 gem 'sidekiq-scheduler', '~> 4.0'
 gem 'sidekiq-unique-jobs', '~> 7.1'
 gem 'sidekiq-bulk', '~> 0.2.0'
+gem 'connection_pool', '~> 2.4', '>= 2.4.1'
+gem 'hiredis', '~> 0.6.1'
 
 # Data Validation
 gem 'activerecord_json_validator', '~> 2.1.0'
