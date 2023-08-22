@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'connection_pool'
 class RedisConfiguration
   class << self
     def establish_pool(new_pool_size)

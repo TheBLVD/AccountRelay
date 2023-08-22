@@ -5,7 +5,6 @@ require 'singleton'
 
 class StatusManager
   include Singleton
-  include Redisable
 
   # Redis key of a status
   # @param [Integer] id
@@ -19,12 +18,13 @@ class StatusManager
   def fetch_min_id(user_id)
     Rails.logger.debug "REDIS FETCHING:::: #{user_id}"
     key = key('min_id', user_id)
-    redis.get(key)
+    Rails.cache.read(key)
 end 
 
 def update_min_id(user_id, value)
     Rails.logger.debug "SETTING FETCHING:::: #{user_id} with #{value}"
     key = key('min_id', user_id)
+    Rails.cache.write(key, value)
     redis.set(key, value)
   end 
 

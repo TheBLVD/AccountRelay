@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Sidekiq.configure_server do |config|
-  config.redis = { url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/1') }
+  config.redis = { driver: :hiredis, url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/0') }
 
   config.server_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Server
@@ -19,7 +19,7 @@ end
 
 # CLIENT
 Sidekiq.configure_client do |config|
-  config.redis = { url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/1') }
+  config.redis = { driver: :hiredis, url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/0') }
 
   config.client_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Client

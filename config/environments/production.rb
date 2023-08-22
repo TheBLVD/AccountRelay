@@ -82,7 +82,7 @@ Rails.application.configure do
   config.active_support.disallowed_deprecation_warnings = []
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
+  config.log_formatter = Logger::Formatter.new
 
   # Use a different logger for distributed setups.
   # require "syslog/logger"
@@ -114,6 +114,9 @@ Rails.application.configure do
   # Sidekiq
   config.active_job.queue_name_prefix = "account_relay#{Rails.env}"
   config.active_job.queue_adapter = :sidekiq
+
+  # CacheStore
+  config.cache_store = :redis_cache_store, { driver: :hiredis, url: 'redis://localhost:6379/2' }
 
   # Host config
   config.hosts << 'acctrelay.moth.social'
