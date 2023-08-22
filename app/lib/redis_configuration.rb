@@ -14,7 +14,11 @@ class RedisConfiguration
     end
 
     def pool_size
-      ENV['RAILS_MAX_THREADS'] || 5
+      if Sidekiq.server?
+        Sidekiq[:concurrency]
+      else
+        ENV['RAILS_MAX_THREADS'] || 5
+      end
     end
   end
 
@@ -35,7 +39,7 @@ class RedisConfiguration
   end
 
   def url
-    ENV.fetch('REDIS_URL', nil)
+    'redis://localhost:6379/1'
   end
 
   private
