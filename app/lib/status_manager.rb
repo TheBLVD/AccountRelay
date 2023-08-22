@@ -25,7 +25,6 @@ def update_min_id(user_id, value)
     Rails.logger.debug "SETTING FETCHING:::: #{user_id} with #{value}"
     key = key('min_id', user_id)
     Rails.cache.write(key, value)
-    redis.set(key, value)
   end 
 
 end 
