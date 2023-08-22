@@ -12,6 +12,6 @@
     class: Scheduler::UpdateAccountStatusesScheduler
     queue: scheduler
   user_statuses_scheduler:
-    every: <%= ENV.fetch('USER_STATUSES', "60m") %>
+    every: <%= ENV.fetch('USER_STATUSES', "20m") %>
     class: Scheduler::UpdateUserStatusesScheduler
     queue: scheduler
