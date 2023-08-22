@@ -17,10 +17,12 @@ class FetchUserStatusesService < BaseService
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
     outbox = outbox!("#{@user.username}@#{@user.domain}", @status_min_id)
+    Rails.logger.info "OPTIONS: >>>> #{outbox}"
     return if outbox.nil? || outbox.ordered_items.nil?
 
     if @status_min_id.nil?
       Rails.logger.info 'NO MIN_ID FOUND: SEND ONLY MOST RECENT STATUS'
+      Rails.logger.info "ORDERED ITEMS: #{outbox.ordered_items}"
       status = outbox.ordered_items.first
       send_announcement(status)
     else
