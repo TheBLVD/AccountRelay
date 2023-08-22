@@ -14,11 +14,7 @@ class RedisConfiguration
     end
 
     def pool_size
-      if Sidekiq.server?
-        Sidekiq[:concurrency]
-      else
-        ENV['RAILS_MAX_THREADS'] || 5
-      end
+      ENV['RAILS_MAX_THREADS'] || 5
     end
   end
 
