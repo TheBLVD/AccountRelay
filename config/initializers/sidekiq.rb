@@ -4,7 +4,7 @@
 # sidekiq required minimum connection of (2 + concurrency)
 # https://github.com/mperham/sidekiq/blob/master/lib/sidekiq/redis_connection.rb#L51
 pool_size = ENV.fetch('RAILS_MAX_THREADS', 10)
-REDIS_POOL = ConnectionPool.new(size: pool_size) { Redis.new(url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/1')) }
+REDIS_POOL = ConnectionPool.new(size: 100) { Redis.new(url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/1')) }
 
 Sidekiq.configure_server do |config|
   config.redis = REDIS_POOL
