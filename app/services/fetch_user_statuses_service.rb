@@ -6,9 +6,11 @@ class FetchUserStatusesService < BaseService
   include ActivitypubOutboxHelper
   INSTANCE_URL = 'https://staging.moth.social'
 
-  def call(user_id, _options = {})
-    @user = User.find(user_id)
-    @status_min_id = StatusManager.instance.fetch_min_id(user_id)
+  def call(user_id, username, domain)
+    @user_id = user_id
+    @username = username
+    @domain = domain
+    @status_min_id = StatusManager.instance.fetch_min_id(@user_id)
 
     Rails.logger.info "OPTIONS: >>>> #{@status_min_id}"
     fetch_outbox!
@@ -16,9 +18,9 @@ class FetchUserStatusesService < BaseService
 
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
-    outbox = outbox!("#{@user.username}@#{@user.domain}", @status_min_id)
+    outbox = outbox!("#{@username}@#{@domain}", @status_min_id)
     Rails.logger.info "OPTIONS: >>>> #{outbox}"
-    return if outbox.nil? || outbox.ordered_items.nil?
+    return if outbox.nil? || outbox.ordered_items.nil? || outbox.ordered_items.empty?
 
     if @status_min_id.nil?
       Rails.logger.info 'NO MIN_ID FOUND: SEND ONLY MOST RECENT STATUS'
@@ -36,7 +38,7 @@ class FetchUserStatusesService < BaseService
     # Update min_id for account
     Rails.logger.info "PREV>>>> #{outbox.prev}"
     min_id = min_id_param(outbox.prev)
-    StatusManager.instance.update_min_id(@user.id, min_id)
+    StatusManager.instance.update_min_id(@user_id, min_id)
   end
 
   def min_id_param(url)
