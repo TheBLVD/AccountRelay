@@ -31,6 +31,7 @@ class User < ApplicationRecord
   has_many :followers, -> { order('follows.id desc') }, through: :passive_relationships, source: :user
 
   after_find :set_defaults
+  before_validation :set_defaults
 
   def follow!(other_user)
     rel = active_relationships.find_or_create_by!(target_user: other_user)
