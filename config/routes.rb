@@ -14,7 +14,10 @@ Rails.application.routes.draw do
   ## API
   namespace :api do
     namespace :v1 do
+      # accounts, channels
       resources :accounts, only: %i[create destroy index]
+      resources :channels, only: %i[create show destroy index]
+
       # foryou
       namespace :foryou do
         resources :users, param: :acct, only: %i[create show index update], constraints: { acct: %r{[^/]+} } do
