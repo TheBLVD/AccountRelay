@@ -5,6 +5,7 @@
 # Table name: channels
 #
 #  id                            :uuid        not null, primary key
+#  title                         :string      display header for channel name
 #  description                   :text        what is the channel about
 #  hidden                        :boolean     default to TRUE, must be manually enabled
 #  owner                         :reference   a user must own a channel, usually the user who made it.
