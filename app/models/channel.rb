@@ -27,4 +27,9 @@ class Channel < ApplicationRecord
 
     rel
   end
+
+  def remove_account!(user)
+    rel = passive_relationships.find_by(user:)
+    rel&.destroy
+  end
 end
