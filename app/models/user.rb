@@ -53,12 +53,15 @@ class User < ApplicationRecord
   def set_defaults
     Rails.logger.debug 'SETTING DEFAULTS'
     for_you_settings[:type] = local? ? 'personal' : 'public'
-    for_you_settings[:status] = 'idle' unless for_you_settings.has_key?(:status)
+    return if local? # early return if user is not a Mammoth user
 
-    # Feed Settings
-    for_you_settings[:curated_by_mammoth] = 3 unless for_you_settings.has_key?(:curated_by_mammoth)
-    for_you_settings[:friends_of_friends] = 3 unless for_you_settings.has_key?(:friends_of_friends)
-    for_you_settings[:from_your_channels] = 3 unless for_you_settings.has_key?(:from_your_channels)
-    for_you_settings[:your_follows] = 3 unless for_you_settings.has_key?(:your_follows)
+    # For You Status Of
+    for_you_settings[:status] = 'idle' unless for_you_settings.key?(:status)
+
+    # For You Feed Settings
+    for_you_settings[:curated_by_mammoth] = 3 unless for_you_settings.key?(:curated_by_mammoth)
+    for_you_settings[:friends_of_friends] = 3 unless for_you_settings.key?(:friends_of_friends)
+    for_you_settings[:from_your_channels] = 3 unless for_you_settings.key?(:from_your_channels)
+    for_you_settings[:your_follows] = 3 unless for_you_settings.key?(:your_follows)
   end
 end
