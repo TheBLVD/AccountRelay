@@ -2,15 +2,18 @@ class ResolveRemoteUserService
   include MastodonHelper
   def call(acct, _options = {})
     @acct = acct
+
+    user_from_remote_handle
   end
 
-  def user_from_follow(follow)
+  def user_from_remote_handle
     # create/get User
     remote_account = remote_account(@acct)
     return if remote_account.nil?
 
-    user = User.where(username: follow.username,
-                      domain: follow.domain).first
+    Rails.logger.debug "REMOTE ACCOUNT>> #{remote_account.inspect}"
+    user = User.where(username: remote_account.username,
+                      domain: remote_account.domain).first
 
     user || User.create(username: remote_account.username, domain: remote_account.domain) do |user|
       user.discoverable = remote_account.discoverable
