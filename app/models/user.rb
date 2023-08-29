@@ -32,7 +32,7 @@ class User < ApplicationRecord
   has_many :following, -> { order('follows.id desc') }, through: :active_relationships,  source: :target_user
   has_many :followers, -> { order('follows.id desc') }, through: :passive_relationships, source: :user
 
-  after_find :set_defaults
+  after_initialize :set_defaults
   before_validation :set_defaults
 
   def follow!(other_user)
@@ -53,7 +53,7 @@ class User < ApplicationRecord
   def set_defaults
     Rails.logger.debug 'SETTING DEFAULTS'
     for_you_settings[:type] = local? ? 'personal' : 'public'
-    return if local? # early return if user is not a Mammoth user
+    return unless local? # early return if user is not a Mammoth user
 
     # For You Status Of
     for_you_settings[:status] = 'idle' unless for_you_settings.key?(:status)
