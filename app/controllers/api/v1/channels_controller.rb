@@ -7,7 +7,7 @@ class Api::V1::ChannelsController < ApiController
 
   def index
     @channels = Channel.where(hidden: false).all
-    render json: @channels, each_serializer: ChannelSerializer
+    render json: @channels, each_serializer: SimpleChannelSerializer
   end
 
   def show
