@@ -32,7 +32,7 @@ class User < ApplicationRecord
   has_many :following, -> { order('follows.id desc') }, through: :active_relationships,  source: :target_user
   has_many :followers, -> { order('follows.id desc') }, through: :passive_relationships, source: :user
 
-  after_initialize :set_defaults
+  after_find :set_defaults
   before_validation :set_defaults
 
   def follow!(other_user)
