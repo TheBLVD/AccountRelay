@@ -21,7 +21,9 @@ class User < ApplicationRecord
   store_accessor :curated_by_mammoth, :friends_of_friends, :from_your_channels, :your_follows, :status
 
   FOR_YOU_SETTINGS_SCHEMA = Rails.root.join('app', 'models', 'schemas', 'user_for_you_settings.json')
-  validates :for_you_settings, presence: true, json: { message: ->(errors) { errors }, schema: FOR_YOU_SETTINGS_SCHEMA }
+  validates :for_you_settings, presence: true, if: :local?, json: { message: lambda { |errors|
+                                                                               errors
+                                                                             }, schema: FOR_YOU_SETTINGS_SCHEMA }
   validates :username, uniqueness: { scope: :domain }
 
   has_many :active_relationships,  class_name: 'Follow', foreign_key: 'user_id',        dependent: :destroy
