@@ -9,6 +9,10 @@
 #  description                   :text        what is the channel about
 #  hidden                        :boolean     default to TRUE, must be manually enabled
 #  owner                         :reference   a user must own a channel, usually the user who made it.
+#  icon                          :string      unicode string fontawesome
+#
+#  accounts                      :reference   users who are part of the channel. Their statuses make up the content
+#
 #
 
 class Channel < ApplicationRecord
