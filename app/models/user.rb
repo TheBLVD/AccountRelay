@@ -17,6 +17,8 @@
 #  local                         :boolean          a local account was created via the api. considered a Mammoth user.
 
 class User < ApplicationRecord
+  include AcctHandle
+
   serialize :for_you_settings, JsonbSerializers
   store_accessor :curated_by_mammoth, :friends_of_friends, :from_your_channels, :your_follows, :status
 

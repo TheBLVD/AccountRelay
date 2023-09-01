@@ -1,5 +1,9 @@
 class SimpleChannelSerializer < ActiveModel::Serializer
-  attributes :id, :title, :description, :owner, :icon
+  attributes :id, :title, :description, :icon
 
-  belongs_to :owner, serializer: ::SimpleUserSerializer
+  attribute :owner
+
+  def owner
+    ::ChannelOwnerSerializer.new(object.owner)
+  end
 end
