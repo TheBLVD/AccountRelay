@@ -30,19 +30,44 @@ class User < ApplicationRecord
   has_many :passive_relationships, class_name: 'Follow', foreign_key: 'target_user_id', dependent: :destroy
 
   has_many :passive_channels, class_name: 'ChannelAccount', foreign_key: 'user_id', dependent: :destroy
+  has_many :active_channels, class_name: 'Subscribe', foreign_key: 'user_id', dependent: :destroy
 
   has_many :following, -> { order('follows.id desc') }, through: :active_relationships,  source: :target_user
   has_many :followers, -> { order('follows.id desc') }, through: :passive_relationships, source: :user
 
+  has_many :subscribes, -> { order('subscribes.id desc') }, through: :active_channels, source: :channel
+
   after_initialize :set_defaults
   before_validation :set_defaults
 
+  # Add user as a following
   def follow!(other_user)
     rel = active_relationships.find_or_create_by!(target_user: other_user)
     Rails.logger.debug "SAVE_FOLLOW:: HAS_CHANGED:: #{rel.changed?}"
     rel.save! if rel.changed?
 
     rel
+  end
+
+  # Remove user from following
+  def unfollow!(other_user)
+    follow = active_relationships.find_by(target_user: other_user)
+    follow&.destroy
+  end
+
+  # Add channel to user's subscribes relationship
+  def subscribe!(channel)
+    rel = active_channels.find_or_create_by!(channel:)
+    Rails.logger.debug "SAVE_SUBSCRIBE #{rel.changed?}"
+    rel.save! if rel.changed?
+
+    rel
+  end
+
+  # Remove channel to user's subscribes relationship
+  def unsubscribe!(channel)
+    subscribe = active_channels.find_or_create_by!(channel:)
+    subscribe&.destroy
   end
 
   def acct

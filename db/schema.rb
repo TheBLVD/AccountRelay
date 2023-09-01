@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_30_180621) do
+ActiveRecord::Schema.define(version: 2023_08_31_214435) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -67,6 +67,15 @@ ActiveRecord::Schema.define(version: 2023_08_30_180621) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "subscribes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "channel_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["channel_id"], name: "index_subscribes_on_channel_id"
+    t.index ["user_id"], name: "index_subscribes_on_user_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "username"
     t.string "domain"
@@ -88,4 +97,6 @@ ActiveRecord::Schema.define(version: 2023_08_30_180621) do
   add_foreign_key "channels", "users", column: "owner_id"
   add_foreign_key "follows", "users", column: "target_user_id", on_delete: :cascade
   add_foreign_key "follows", "users", on_delete: :cascade
+  add_foreign_key "subscribes", "channels", on_delete: :cascade
+  add_foreign_key "subscribes", "users", on_delete: :cascade
 end

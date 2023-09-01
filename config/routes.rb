@@ -16,7 +16,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       # accounts, channels
       resources :accounts, only: %i[create destroy index]
-      resources :channels, only: %i[create show destroy index]
+      resources :channels, only: %i[create show destroy index] do
+        member do
+          post :subscribe, constraints: { user_acct: %r{[^/]+} }
+          post :unsubscribe, constraints: { user_acct: %r{[^/]+} }
+        end
+      end
 
       # foryou
       namespace :foryou do
