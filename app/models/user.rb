@@ -15,6 +15,7 @@
 #  followers_count               :int              number of user's following this user
 #  following_count               :int              number of user's they are following
 #  local                         :boolean          a local account was created via the api. considered a Mammoth user.
+#  personalize                   :boolean          Mammoth account has updated with personaliztion. ie generated follows/fedigraph
 
 class User < ApplicationRecord
   include AcctHandle
@@ -81,7 +82,7 @@ class User < ApplicationRecord
   # hash[:key] = 0 unless hash.has_key?(:key)
   def set_defaults
     Rails.logger.debug 'SETTING DEFAULTS'
-    for_you_settings[:type] = local? ? 'personal' : 'public'
+    for_you_settings[:type] = personalize? ? 'personal' : 'public'
     return unless local? # early return if user is not a Mammoth user
 
     # For You Status Of
