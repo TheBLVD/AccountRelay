@@ -15,3 +15,7 @@
     every: <%= ENV.fetch('USER_STATUSES', "20m") %>
     class: Scheduler::UpdateUserStatusesScheduler
     queue: scheduler
+  channel_account_statuses_scheduler:
+    every: <%= ENV.fetch('CHANNEL_ACCOUNT_STATUSES', "2m") %>
+    class: Scheduler::UpdateChannelAcctStatusesScheduler
+    queue: scheduler
