@@ -6,6 +6,10 @@ class Api::V1::ChannelsController < ApiController
     render json: { error: e.to_s }, status: 422
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |_exception|
+    render json: { error: "Channel #{params[:id]} not found" }, status: 404
+  end
+
   def index
     @channels = Channel.where(hidden: false).all
     render json: @channels, each_serializer: SimpleChannelSerializer
