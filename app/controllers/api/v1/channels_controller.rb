@@ -12,7 +12,7 @@ class Api::V1::ChannelsController < ApiController
 
   def index
     @channels = Channel.where(hidden: false).all
-    render json: @channels, each_serializer: SimpleChannelSerializer
+    render json: @channels, each_serializer: SimpleChannelSerializer, show_accounts: channel_accounts_param
   end
 
   def show
@@ -54,5 +54,10 @@ class Api::V1::ChannelsController < ApiController
 
   def acct_param
     params.require(:acct)
+  end
+
+  def channel_accounts_param
+    Rails.logger.debug "PARAM #{params.permit(:include_accounts)}"
+    params[:include_accounts].to_s.eql?('true')
   end
 end
