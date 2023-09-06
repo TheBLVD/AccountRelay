@@ -17,6 +17,11 @@ Rails.application.routes.draw do
       # accounts, channels
       resources :accounts, only: %i[create destroy index]
       resources :channels, only: %i[create show destroy index] do
+        # Return all channel accounts
+        collection do
+          get 'accounts'
+        end
+        # Subscribe/Unsubscribe to channels
         member do
           post :subscribe, constraints: { user_acct: %r{[^/]+} }
           post :unsubscribe, constraints: { user_acct: %r{[^/]+} }

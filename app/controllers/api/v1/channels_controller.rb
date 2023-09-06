@@ -1,5 +1,5 @@
 class Api::V1::ChannelsController < ApiController
-  before_action :set_channel, except: %i[index]
+  before_action :set_channel, except: %i[index accounts]
   before_action :set_user, only: %i[subscribe unsubscribe]
 
   rescue_from ArgumentError do |e|
@@ -31,7 +31,18 @@ class Api::V1::ChannelsController < ApiController
     render json: @user, serializer: AdvanceUserSerializer
   end
 
+  def accounts
+    @accounts = channel_accounts
+    render json: @accounts
+  end
+
   private
+
+  def channel_accounts
+    ChannelAccount.all.includes(:user).pluck(:username, :domain).map do |username, domain|
+      { username:, domain: }
+    end
+  end
 
   def set_channel
     @channel = Channel.where(hidden: false).find(params[:id])
