@@ -19,12 +19,12 @@ class SendMessageToInboxService < BaseService
     digest = 'SHA-256=' + Base64.strict_encode64(sha256.digest(@content.to_json))
 
     date          = Time.now.utc.httpdate
-    keypair       = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
+    keypair       = OpenSSL::PKey::RSA.new(ENV.fetch('PRIVATE_KEY', nil))
     signed_string = "(request-target): post /inbox\nhost: #{target_host}\ndate: #{date}\ndigest: #{digest}"
     signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest.new('SHA256'), signed_string))
     header        = "keyId=\"#{@relay}/actor#main-key\", headers=\"(request-target) host date digest\",signature=\"#{signature}\""
 
-    response = HTTP.headers({ 'host': target_host, 'date': date, 'signature': header, 'digest': digest, 'Content-Type': 'application/activity+json' }).post(
+    response = HTTP.headers({ host: target_host, date:, signature: header, digest:, 'Content-Type': 'application/activity+json' }).post(
       "https://#{target_host}/inbox", json: @content
     )
 

@@ -2,7 +2,7 @@
 
 # Fetch all statuses for a given hashtag
 class FetchHashtagService < BaseService
-  INSTANCE_URL = 'https://moth.social'
+  INSTANCE_URL = 'https://staging.moth.social'
 
   def call(hashtag, options = {})
     @hashtag = hashtag
