@@ -2,19 +2,18 @@
 
 # Fetch all statuses for a given hashtag
 class FetchHashtagService < BaseService
-  include http
   INSTANCE_URL = 'https://moth.social'
 
   def call(hashtag, options = {})
     @hashtag = hashtag
     @instance_url = options[:instance_url]
-    @limit = options[:limit] or 40
+    @limit = options[:limit] || 40
     Rails.logger.info "OPTIONS: >>>> #{options}"
     fetch_hashtag!
   end
 
   def fetch_hashtag!
-    response = HTTP.get("https://#{@instance_url}/api/v1/timelines/tag/#{@hashtag}?limit=#{limit}")
+    response = HTTP.get("https://#{@instance_url}/api/v1/timelines/tag/#{@hashtag}?limit=#{@limit}")
     statuses = response.parse
 
     Rails.logger.info "RESPONSE: >>>> #{statuses}"
@@ -23,14 +22,13 @@ class FetchHashtagService < BaseService
 
     statuses.each do |status|
       # TODO: filter statuses that have low engagement
-      send_announcement(status.uri)
+      send_announcement(status['uri'])
     end
-
-    Rails.logger.info "STATUSES: >>>> #{statuses}"
   end
 
   def send_announcement(status_url)
     content = announcement_payload(status_url)
+    Rails.logger.info "CONTENT: >>>> #{content}"
     SendMessageToInboxService.new.call(INSTANCE_URL, content)
   end
 

@@ -19,3 +19,7 @@
     every: <%= ENV.fetch('CHANNEL_ACCOUNT_STATUSES', "2m") %>
     class: Scheduler::UpdateChannelAcctStatusesScheduler
     queue: scheduler
+  fetch_hashtags_scheduler:
+    every: <%= ENV.fetch('FETCH_HASHTAGS', "2m") %>
+    class: Scheduler::UpdateHashtagsScheduler
+    queue: scheduler
