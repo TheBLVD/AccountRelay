@@ -6,13 +6,20 @@
     "from_your_channels",
     "your_follows",
     "curated_by_mammoth",
-    "status"
+    "status",
+    "enabled_channels"
   ],
   "properties": {
     "status": { "type": "string", "pattern": "^(idle|pending|error)$" },
     "friends_of_friends": { "type": "integer", "minimum": 0, "maximum": 3 },
     "from_your_channels": { "type": "integer", "minimum": 0, "maximum": 3 },
     "curated_by_mammoth": { "type": "integer", "minimum": 0, "maximum": 3 },
-    "your_follows": { "type": "integer", "minimum": 0, "maximum": 3 }
+    "your_follows": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "enabled_channels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
   }
 }

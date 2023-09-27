@@ -88,6 +88,9 @@ class User < ApplicationRecord
     # For You Status Of
     for_you_settings[:status] = 'idle' unless for_you_settings.key?(:status)
 
+    # For You Channels Selected
+    for_you_settings[:enabled_channels] = subscribes.pluck(:id) unless for_you_settings[:enabled_channels]
+
     # For You Feed Settings
     for_you_settings[:curated_by_mammoth] = 3 unless for_you_settings.key?(:curated_by_mammoth)
     for_you_settings[:friends_of_friends] = 3 unless for_you_settings.key?(:friends_of_friends)
