@@ -62,11 +62,13 @@ class User < ApplicationRecord
   end
 
   # Add channel to user's subscribes relationship
+  # By Default the channel is also added to 'enabled_channels' ForYou Settings
   def subscribe!(channel)
     rel = active_channels.find_or_create_by!(channel:)
-    for_you_settings[:enabled_channels] = for_you_settings[:enabled_channels].append(channel[:id])
-    Rails.logger.debug "SETTINGS??> #{for_you_settings[:enabled_channels]}"
-    Rails.logger.debug "SAVE_SUBSCRIBE #{rel.inspect}"
+    updated_enabled_channels = for_you_settings[:enabled_channels].to_set.add(channel[:id])
+    for_you_settings[:enabled_channels] = updated_enabled_channels.to_a
+
+    rel.save!
     save!
   end
 
@@ -74,6 +76,7 @@ class User < ApplicationRecord
   def unsubscribe!(channel)
     subscribe = active_channels.find_or_create_by!(channel:)
     for_you_settings[:enabled_channels] = for_you_settings[:enabled_channels].filter { |c| c != channel[:id] }
+
     subscribe&.destroy
     save!
   end
