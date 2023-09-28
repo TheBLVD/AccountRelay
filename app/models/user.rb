@@ -21,7 +21,8 @@ class User < ApplicationRecord
   include AcctHandle
 
   serialize :for_you_settings, JsonbSerializers
-  store_accessor :curated_by_mammoth, :friends_of_friends, :from_your_channels, :your_follows, :status
+  store_accessor :curated_by_mammoth, :friends_of_friends, :from_your_channels, :your_follows, :status,
+                 :enabled_channels
 
   FOR_YOU_SETTINGS_SCHEMA = Rails.root.join('app', 'models', 'schemas', 'user_for_you_settings.json')
   validates :for_you_settings, presence: true, if: :local?, json: { message: lambda { |errors|
@@ -38,7 +39,9 @@ class User < ApplicationRecord
   has_many :following, -> { order('follows.id desc') }, through: :active_relationships,  source: :target_user
   has_many :followers, -> { order('follows.id desc') }, through: :passive_relationships, source: :user
 
-  has_many :subscribes, -> { order('subscribes.id desc') }, through: :active_channels, source: :channel
+  has_many :subscribes, lambda {
+                          order('subscribes.id desc')
+                        }, through: :active_channels, source: :channel
 
   after_initialize :set_defaults
   before_validation :set_defaults
@@ -59,18 +62,23 @@ class User < ApplicationRecord
   end
 
   # Add channel to user's subscribes relationship
+  # By Default the channel is also added to 'enabled_channels' ForYou Settings
   def subscribe!(channel)
     rel = active_channels.find_or_create_by!(channel:)
-    Rails.logger.debug "SAVE_SUBSCRIBE #{rel.changed?}"
-    rel.save! if rel.changed?
+    updated_enabled_channels = for_you_settings[:enabled_channels].to_set.add(channel[:id])
+    for_you_settings[:enabled_channels] = updated_enabled_channels.to_a
 
-    rel
+    rel.save! if rel.changed?
+    save!
   end
 
   # Remove channel to user's subscribes relationship
   def unsubscribe!(channel)
     subscribe = active_channels.find_or_create_by!(channel:)
+    for_you_settings[:enabled_channels] = for_you_settings[:enabled_channels].filter { |c| c != channel[:id] }
+
     subscribe&.destroy
+    save!
   end
 
   def acct
@@ -88,10 +96,13 @@ class User < ApplicationRecord
     # For You Status Of
     for_you_settings[:status] = 'idle' unless for_you_settings.key?(:status)
 
+    # For You Channels Selected
+    for_you_settings[:enabled_channels] = subscribes.pluck(:id) unless for_you_settings.key?(:enabled_channels)
+
     # For You Feed Settings
-    for_you_settings[:curated_by_mammoth] = 3 unless for_you_settings.key?(:curated_by_mammoth)
-    for_you_settings[:friends_of_friends] = 3 unless for_you_settings.key?(:friends_of_friends)
-    for_you_settings[:from_your_channels] = 3 unless for_you_settings.key?(:from_your_channels)
-    for_you_settings[:your_follows] = 3 unless for_you_settings.key?(:your_follows)
+    for_you_settings[:curated_by_mammoth] = 1 unless for_you_settings.key?(:curated_by_mammoth)
+    for_you_settings[:friends_of_friends] = 1 unless for_you_settings.key?(:friends_of_friends)
+    for_you_settings[:from_your_channels] = 1 unless for_you_settings.key?(:from_your_channels)
+    for_you_settings[:your_follows] = 1 unless for_you_settings.key?(:your_follows)
   end
 end
