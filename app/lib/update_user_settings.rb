@@ -19,8 +19,8 @@ class UpdateUserSettings
   end
 
   def iterate_params
-    validate_enabled_channels
     Rails.logger.debug "USER UPDATING SETTINGS>> #{@user.inspect}"
+    validate_enabled_channels
     @params.except('acct').each do |key1, value1|
       Rails.logger.debug "#{key1} :: #{value1}"
       @user.for_you_settings[key1] = (value1 || @user.for_you_settings[key1])

@@ -68,7 +68,7 @@ class User < ApplicationRecord
     updated_enabled_channels = for_you_settings[:enabled_channels].to_set.add(channel[:id])
     for_you_settings[:enabled_channels] = updated_enabled_channels.to_a
 
-    rel.save!
+    rel.save! if rel.changed?
     save!
   end
 
@@ -106,5 +106,3 @@ class User < ApplicationRecord
     for_you_settings[:your_follows] = 1 unless for_you_settings.key?(:your_follows)
   end
 end
-
-# {"curated_by_mammoth":3,"friends_of_friends":2,"from_your_channels":3,"type":"personal","status":"idle","your_follows":1,"enabled_channels":["3da58e91-b15d-45ae-abdb-e55a0bd37628","cde1dcdc-d295-46b3-a155-1664862faca1"]}
