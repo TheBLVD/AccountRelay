@@ -68,7 +68,8 @@ class Api::V1::Foryou::UsersController < ApiController
       :curated_by_mammoth,
       :friends_of_friends,
       :from_your_channels,
-      :your_follows
+      :your_follows,
+      enabled_channels: []
     )
   end
 
