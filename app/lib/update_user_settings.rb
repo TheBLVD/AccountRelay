@@ -20,21 +20,22 @@ class UpdateUserSettings
 
   def iterate_params
     Rails.logger.debug "USER UPDATING SETTINGS>> #{@user.inspect}"
-    validate_enabled_channels
-    @params.except('acct').each do |key1, value1|
-      Rails.logger.debug "#{key1} :: #{value1}"
+    iterate_enabled_channels
+    @params.except('acct', 'enabled_channels').each do |key1, value1|
       @user.for_you_settings[key1] = (value1 || @user.for_you_settings[key1])
     end
   end
 
-  # If no channel id's are returned in the settings
-  # It needs to be set to an empty array.
-  # Bc it would default to the user's subscribed channels if the
+  # If false is sent, then it needs to be assigned to an empty array. No selections.
+  # It would default to the user's subscribed channels if the
   # key value isn't present
-  def validate_enabled_channels
-    return unless @user.for_you_settings['enabled_channels']
+  def iterate_enabled_channels
+    return unless @params['enabled_channels']
 
-    Rails.logger.debug "MISSING FOR YOU SETTINGS \n"
-    @user.for_you_settings['enabled_channels'] = []
+    @user.for_you_settings['enabled_channels'] = if @params['enabled_channels'][0] == 'false'
+                                                   []
+                                                 else
+                                                   @params['enabled_channels']
+                                                 end
   end
 end
