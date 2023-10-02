@@ -6,8 +6,8 @@ Datadog.configure do |c|
   c.env = 'production'
   c.version = '2.5.17'
   c.service = 'account-relay'
-  c.tracing.enabled = Rails.env.production?
-  c.tracing.sampling.default_rate = 0.01
+  c.tracing.enabled = false
+  # c.tracing.sampling.default_rate = 0.0001
   c.profiling.enabled = Rails.env.production?
   c.appsec.enabled = Rails.env.production?
   c.runtime_metrics.enabled = Rails.env.production?
