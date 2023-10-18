@@ -101,8 +101,8 @@ class User < ApplicationRecord
 
     # For You Feed Settings
     for_you_settings[:curated_by_mammoth] = 1 unless for_you_settings.key?(:curated_by_mammoth)
-    for_you_settings[:friends_of_friends] = 1 unless for_you_settings.key?(:friends_of_friends)
+    for_you_settings[:friends_of_friends] = 0 unless for_you_settings.key?(:friends_of_friends)
     for_you_settings[:from_your_channels] = 1 unless for_you_settings.key?(:from_your_channels)
-    for_you_settings[:your_follows] = 1 unless for_you_settings.key?(:your_follows)
+    for_you_settings[:your_follows] = 0 unless for_you_settings.key?(:your_follows)
   end
 end
