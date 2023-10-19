@@ -1,5 +1,5 @@
 class SimpleChannelSerializer < ActiveModel::Serializer
-  attributes :id, :title, :description, :icon
+  attributes :id, :title, :description, :icon, :fy_engagement_threshold
   attribute :owner
 
   # Conditionally render accounts if `include_accounts` as a param is passed

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_09_05_174803) do
+ActiveRecord::Schema.define(version: 2023_10_19_173431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 2023_09_05_174803) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "icon", default: ""
+    t.integer "fy_engagement_threshold", default: 0
     t.index ["owner_id"], name: "index_channels_on_owner_id"
   end
 

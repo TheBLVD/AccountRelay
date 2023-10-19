@@ -10,11 +10,11 @@
 #  hidden                        :boolean     default to TRUE, must be manually enabled
 #  owner                         :reference   a user must own a channel, usually the user who made it.
 #  icon                          :string      unicode string fontawesome
+#  fy_engagement_threshold       :number      this is the minium engagment threshold for a channel in a for you feed
 #
 #  accounts                      :reference   users who are part of the channel. Their statuses make up the content
 #
 #
-
 class Channel < ApplicationRecord
   belongs_to :owner, class_name: 'User'
 
