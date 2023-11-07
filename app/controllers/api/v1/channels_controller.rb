@@ -1,14 +1,13 @@
 class Api::V1::ChannelsController < ApiController
   before_action :set_channel, except: %i[index accounts]
   before_action :set_user, only: %i[subscribe unsubscribe]
-  ap_logger = Appsignal::Logger.new('channel_controller')
 
   rescue_from ArgumentError do |e|
     render json: { error: e.to_s }, status: 422
   end
 
   rescue_from ActiveRecord::RecordNotFound do |_exception|
-    ap_logger.info("Channel #{params[:id]} not found")
+    Rails.logger.warn "Channel #{params[:id]} not found"
     render json: { error: "Channel #{params[:id]} not found" }, status: 404
   end
 
