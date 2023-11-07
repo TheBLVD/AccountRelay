@@ -86,17 +86,14 @@ Rails.application.configure do
 
   # Use a different logger for distributed setups.
   # require "syslog/logger"
-  ActiveSupport::Logger.new(STDOUT).tap do |logger|
-    logger.formatter = config.log_formatter
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
-  end
+  # ActiveSupport::Logger.new(STDOUT).tap do |logger|
+  #   logger.formatter = config.log_formatter
+  #   config.logger = ActiveSupport::TaggedLogging.new(logger)
+  # end
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
-  config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'info').to_sym
-  HttpLog.configure do |config|
-    config.compact_log = true
-  end
+  config.log_level = :info
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
