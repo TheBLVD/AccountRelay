@@ -5,6 +5,7 @@ default: &defaults
 
   # Your app's name
   name: "AccountRelay"
+  logleve: warning
 
   # Actions that should not be monitored by AppSignal
   # ignore_actions:
