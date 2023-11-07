@@ -5,7 +5,7 @@ default: &defaults
 
   # Your app's name
   name: "AccountRelay"
-  loglevel: warning
+  loglevel: warn
 
   # Actions that should not be monitored by AppSignal
   # ignore_actions:
