@@ -41,28 +41,28 @@ gem 'listen', '~> 3.3'
 gem 'bootsnap', '>= 1.4.4', require: false
 
 # Processing Jobs
-gem 'redis'
-gem 'sidekiq'
-gem 'sidekiq-scheduler', '~> 4.0'
-gem 'sidekiq-unique-jobs', '~> 7.1'
-gem 'sidekiq-bulk', '~> 0.2.0'
 gem 'connection_pool', '~> 2.4', '>= 2.4.1'
 gem 'hiredis', '~> 0.6.1'
+gem 'redis'
+gem 'sidekiq'
+gem 'sidekiq-bulk', '~> 0.2.0'
+gem 'sidekiq-scheduler', '~> 4.0'
+gem 'sidekiq-unique-jobs', '~> 7.1'
 
 # Data Validation
 gem 'activerecord_json_validator', '~> 2.1.0'
 
 group :production, :staging do
-  gem 'lograge', '~> 0.12'
   gem 'google-protobuf', '~> 3.0'
-  gem 'ddtrace', require: 'ddtrace/auto_instrument'
-  gem 'dogstatsd-ruby', '~> 5.6'
-end
+  gem 'lograge', '~> 0.12'
 
+  # AppSignal
+  gem 'appsignal'
+end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
 end
 
 group :development do
@@ -73,17 +73,17 @@ group :development do
   gem 'rack-mini-profiler', '~> 2.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
-  # Deployment 
+  # Deployment
   # Use Capistrano for deployment
-  gem "capistrano", "~> 3.17", require: false
+  gem 'capistrano', '~> 3.17', require: false
+  gem 'capistrano-bundler'
+  gem 'capistrano-passenger', '~> 0.2.0'
   gem 'capistrano-rails', '~> 1.1.0'
   gem 'capistrano-rbenv', '~> 2.2'
-  gem 'capistrano-passenger', '~> 0.2.0'
-  gem 'capistrano-bundler'
 
   # Required
-  gem 'ed25519', '>= 1.2', '< 2.0'
   gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
+  gem 'ed25519', '>= 1.2', '< 2.0'
 end
 
 group :test do
@@ -95,4 +95,4 @@ group :test do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]

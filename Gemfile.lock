@@ -72,6 +72,8 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     airbrussh (1.4.1)
       sshkit (>= 1.6.1, != 1.7.0)
+    appsignal (3.4.14)
+      rack
     bcrypt_pbkdf (1.1.0)
     bindex (0.8.1)
     bootsnap (1.16.0)
@@ -111,13 +113,6 @@ GEM
     connection_pool (2.4.1)
     crass (1.0.6)
     date (3.3.3)
-    ddtrace (1.12.1)
-      debase-ruby_core_source (= 3.2.1)
-      libdatadog (~> 2.0.0.1.0)
-      libddwaf (~> 1.9.0.0.0)
-      msgpack
-    debase-ruby_core_source (3.2.1)
-    dogstatsd-ruby (5.6.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.8.1)
@@ -179,12 +174,6 @@ GEM
       simpleidn (~> 0.2)
       uri_template (~> 0.7)
     jsonapi-renderer (0.2.2)
-    libdatadog (2.0.0.1.0)
-    libdatadog (2.0.0.1.0-x86_64-linux)
-    libddwaf (1.9.0.0.1-arm64-darwin)
-      ffi (~> 1.0)
-    libddwaf (1.9.0.0.1-x86_64-linux)
-      ffi (~> 1.0)
     link_header (0.0.8)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -372,6 +361,7 @@ DEPENDENCIES
   active_model_serializers (~> 0.10.0)
   activerecord_json_validator (~> 2.1.0)
   addressable (~> 2.8)
+  appsignal
   bcrypt_pbkdf (>= 1.0, < 2.0)
   bootsnap (>= 1.4.4)
   byebug
@@ -382,8 +372,6 @@ DEPENDENCIES
   capistrano-rbenv (~> 2.2)
   capybara (>= 3.26)
   connection_pool (~> 2.4, >= 2.4.1)
-  ddtrace
-  dogstatsd-ruby (~> 5.6)
   dotenv-rails
   ed25519 (>= 1.2, < 2.0)
   google-protobuf (~> 3.0)
