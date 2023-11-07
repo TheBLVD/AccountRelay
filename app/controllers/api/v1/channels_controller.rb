@@ -7,7 +7,7 @@ class Api::V1::ChannelsController < ApiController
   end
 
   rescue_from ActiveRecord::RecordNotFound do |_exception|
-    Rails.logger.warn "Channel #{params[:id]} not found"
+    Rails.logger.warn "Channel not found: #{params[:id]}"
     render json: { error: "Channel #{params[:id]} not found" }, status: 404
   end
 
