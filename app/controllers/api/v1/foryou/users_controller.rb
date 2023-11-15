@@ -52,7 +52,7 @@ class Api::V1::Foryou::UsersController < ApiController
 
   def fetch_user
     username, domain = acct_param.split('@')
-    Rails.cache.fetch("user:show:#{username}:#{domain}", expires_in: 60.seconds) do
+    Rails.cache.fetch("user:show:#{username}:#{domain}", expires_in: 7.days) do
       User.where(username:, domain:).first
     end
   end
