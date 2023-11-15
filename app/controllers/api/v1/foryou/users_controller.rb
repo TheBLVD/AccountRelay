@@ -36,8 +36,7 @@ class Api::V1::Foryou::UsersController < ApiController
   private
 
   def set_user_with_mammoth
-    username, domain = acct_param.split('@')
-    @user = User.where(username:, domain:).first
+    @user = fetch_user
     # If no user if found, create it
     @user = User.create_by_remote(acct_param) if @user.nil?
 
@@ -48,6 +47,13 @@ class Api::V1::Foryou::UsersController < ApiController
       @user
     else
       @user.update(local: true)
+    end
+  end
+
+  def fetch_user
+    username, domain = acct_param.split('@')
+    Rails.cache.fetch("user:show:#{username}:#{domain}", expires_in: 60.seconds) do
+      User.where(username:, domain:).first
     end
   end
 
