@@ -1,7 +1,10 @@
 class Api::V1::Foryou::UsersController < ApiController
   include MastodonHelper
+
+  # Fetch and Cache user
   before_action :set_user_with_mammoth, only: %i[show]
-  before_action :cast_params, only: %i[update]
+  # Clear the user cache for #show when updating the user
+  before_action :cast_params, :clear_user_cache, only: %i[update]
 
   def create
     user = User.create_by_remote(acct_param)
@@ -50,9 +53,14 @@ class Api::V1::Foryou::UsersController < ApiController
     end
   end
 
+  def clear_user_cache
+    username, domain = acct_param.split('@')
+    Rails.cache.delete("user:show:#{username}:#{domain}")
+  end
+
   def fetch_user
     username, domain = acct_param.split('@')
-    Rails.cache.fetch("user:show:#{username}:#{domain}", expires_in: 7.days) do
+    Rails.cache.fetch("user:show:#{username}:#{domain}", expires_in: 60.seconds) do
       User.where(username:, domain:).first
     end
   end
