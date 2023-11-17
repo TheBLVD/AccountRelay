@@ -36,11 +36,6 @@ class Api::V1::Foryou::UsersController < ApiController
 
   def destroy; end
 
-  def local
-    acct = acct_param
-    render json: { acct: 'HELLO' }
-  end
-
   private
 
   def set_user_with_mammoth
@@ -73,7 +68,7 @@ class Api::V1::Foryou::UsersController < ApiController
   # personalize users are Mammoth users that have had
   # their follows, and fedigraph generated and added.
   def personalized_users
-    @users = User.where(personalize: true).pluck(:id)
+    @users = User.where(personalize: true)
   end
 
   def local?
@@ -83,7 +78,7 @@ class Api::V1::Foryou::UsersController < ApiController
 
   def user_acct_param
     params.require(:user_acct)
-  end 
+  end
 
   def acct_param
     params.require(:acct)
