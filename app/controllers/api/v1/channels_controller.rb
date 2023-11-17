@@ -50,11 +50,17 @@ class Api::V1::ChannelsController < ApiController
   end
 
   def set_user
+    clear_user_cache
     @user = User.by_handle(acct_param)
   end
 
   def acct_param
     params.require(:acct)
+  end
+
+  def clear_user_cache
+    username, domain = acct_param.split('@')
+    Rails.cache.delete("user:show:#{username}:#{domain}")
   end
 
   def channel_accounts_param
