@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       namespace :foryou do
         resources :users, param: :acct, only: %i[create show index update], constraints: { acct: %r{[^/]+} } do
           resources :following, only: :index, controller: :following_users, constraints: { user_acct: %r{[^/]+} }
+          resources :mammoth, only: :index, controller: :mammoth_user, constraints: { user_acct: %r{[^/]+} }
         end
       end
     end
