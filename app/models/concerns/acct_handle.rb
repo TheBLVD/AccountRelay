@@ -15,6 +15,8 @@ module AcctHandle
     # If it does we want to mark it as a Mammoth Account
     def create_by_remote(acct)
       account = MastodonAccount.new(acct).perform
+      return account if account.nil?
+
       User.find_or_create_by(username: account.username, domain: account.domain, discoverable: account.discoverable,
                              display_name: account.display_name, domain_id: account.domain_id, followers_count: account.followers_count, following_count: account.following_count, local: true)
     end

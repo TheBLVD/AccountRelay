@@ -6,6 +6,10 @@ class Api::V1::Foryou::UsersController < ApiController
   # Clear the user cache for #show when updating the user
   before_action :cast_params, :clear_user_cache, only: %i[update]
 
+  rescue_from Error do |exception|
+    render json: { error: exception }, status: 404
+  end
+
   def create
     user = User.create_by_remote(acct_param)
     Rails.logger.debug user
@@ -42,6 +46,7 @@ class Api::V1::Foryou::UsersController < ApiController
     @user = fetch_user
     # If no user if found, create it
     @user = User.create_by_remote(acct_param) if @user.nil?
+    raise Error, "Unable to resolve user: #{acct_param}" if @user.nil?
 
     # Otherwise ensure it's correct attribute is local
     # 'local' users are Mammoth users.
