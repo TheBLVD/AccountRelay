@@ -7,7 +7,7 @@ class Api::V1::Admin::UsersController < ApiController
   after_action { pagy_headers_merge(@pagy) if @pagy }
 
   def index
-    @pagy, @users = pagy(User.where(local: true).all)
+    @pagy, @users = pagy(User.where(local: true))
     render json: @users, each_serializer: SimpleUserSerializer
   end
 end
