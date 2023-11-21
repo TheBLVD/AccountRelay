@@ -49,6 +49,9 @@ gem 'sidekiq-bulk', '~> 0.2.0'
 gem 'sidekiq-scheduler', '~> 4.0'
 gem 'sidekiq-unique-jobs', '~> 7.1'
 
+# Pagination
+gem 'pagy'
+
 # Data Validation
 gem 'activerecord_json_validator', '~> 2.1.0'
 

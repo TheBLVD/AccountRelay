@@ -28,6 +28,11 @@ Rails.application.routes.draw do
         end
       end
 
+      # Admin for Moth.Social
+      namespace :admin do
+        resources :users, only: %i[index]
+      end
+
       # foryou
       namespace :foryou do
         resources :users, param: :acct, only: %i[create show index update], constraints: { acct: %r{[^/]+} } do
