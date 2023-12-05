@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_19_173431) do
+ActiveRecord::Schema.define(version: 2023_12_05_161521) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 2023_10_19_173431) do
     t.boolean "local", default: false
     t.jsonb "for_you_settings", default: {}, null: false
     t.boolean "personalize", default: false
+    t.bigint "last_active"
     t.index ["username", "domain"], name: "index_users_on_username_and_domain", unique: true
   end
 

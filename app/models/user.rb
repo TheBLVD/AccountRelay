@@ -16,7 +16,7 @@
 #  following_count               :int              number of user's they are following
 #  local                         :boolean          a local account was created via the api. considered a Mammoth user.
 #  personalize                   :boolean          Mammoth account has updated with personaliztion. ie generated follows/fedigraph
-
+#  last_active                   :integer          Most Recent Checkin from Feature.Moth.Social in Epoch
 class User < ApplicationRecord
   include AcctHandle
 
