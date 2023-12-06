@@ -6,14 +6,14 @@ class Api::V1::Admin::UsersController < ApiController
   include Pagy::Backend
   after_action { pagy_headers_merge(@pagy) if @pagy }
 
+  THROTTLE_LIMIT = ENV['THROTTLE_LIMIT'] || 1_000
+
   def index
-    @pagy, @users = pagy(User.where(local: true))
+    @pagy, @users = pagy(User.where(local: true), count: THROTTLE_LIMIT)
     render json: @users, each_serializer: SimpleUserSerializer
   end
 
   def update
-    Rails.logger.debug "PARAMS #{acct_update_params}"
-    Rails.logger.debug "PARAMS #{last_active_param}"
     username, domain = acct_update_params.split('@')
     user = User.where(username:, domain:).first
     user.update(last_active: last_active_param)
