@@ -9,7 +9,7 @@ class Api::V1::Admin::UsersController < ApiController
   THROTTLE_LIMIT = ENV['THROTTLE_LIMIT'] || 30_000
 
   def index
-    @pagy, @users = pagy(mammoth_users, count: THROTTLE_LIMIT)
+    @pagy, @users = pagy(mammoth_users)
     render json: @users, each_serializer: SimpleUserSerializer
   end
 
@@ -22,7 +22,7 @@ class Api::V1::Admin::UsersController < ApiController
   private
 
   def mammoth_users
-    User.where(local: true).order(last_active: :asc)
+    User.where(local: true).order(last_active: :asc).limit(THROTTLE_LIMIT)
   end
 
   def acct_update_params
