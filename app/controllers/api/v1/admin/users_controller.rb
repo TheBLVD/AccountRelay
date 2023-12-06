@@ -7,10 +7,10 @@ class Api::V1::Admin::UsersController < ApiController
   after_action { pagy_headers_merge(@pagy) if @pagy }
 
   THROTTLE_LIMIT = ENV['THROTTLE_LIMIT'] || 30_000
+  USERS_PER_PAGE = 500
 
   def index
-    Rails.logger.warn "THROTTLE_LIMIT: #{THROTTLE_LIMIT}"
-    @pagy, @users = pagy(mammoth_users, count: THROTTLE_LIMIT)
+    @pagy, @users = pagy(mammoth_users, items:USERS_PER_PAGE )
     render json: @users, each_serializer: SimpleUserSerializer
   end
 
@@ -23,7 +23,8 @@ class Api::V1::Admin::UsersController < ApiController
   private
 
   def mammoth_users
-    User.where(local: true).order(last_active: :asc)
+    Rails.logger.warn "THROTTLE_LIMIT: #{THROTTLE_LIMIT}"
+    User.where(local: true).order(last_active: :asc).limit(THROTTLE_LIMIT)
   end
 
   def acct_update_params
