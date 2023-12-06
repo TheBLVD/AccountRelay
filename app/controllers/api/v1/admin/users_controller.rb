@@ -10,6 +10,7 @@ class Api::V1::Admin::UsersController < ApiController
 
   def index
     @pagy, @users = pagy(mammoth_users)
+    Rails.logger.debugger "THROTTLE_LIMIT: #{THROTTLE_LIMIT}"
     render json: @users, each_serializer: SimpleUserSerializer
   end
 
