@@ -27,7 +27,7 @@ class Api::V1::ChannelsController < ApiController
   end
 
   def unsubscribe
-    UnsubscribeService.new.call(@user, @channel)
+    UnsubscribeService.new.call(@user, unsubscribe_channel)
 
     render json: @user, serializer: AdvanceUserSerializer
   end
@@ -47,6 +47,12 @@ class Api::V1::ChannelsController < ApiController
 
   def set_channel
     @channel = Channel.where(hidden: false).find(params[:id])
+  end
+
+  # When unsubscribing, this might happen from a hidden channel
+  # We need to beable to trigger this. Even after hiding/depracating a channel
+  def unsubscribe_channel
+    Channel.find(params[:id])
   end
 
   def set_user
