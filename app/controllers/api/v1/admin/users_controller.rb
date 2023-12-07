@@ -22,9 +22,9 @@ class Api::V1::Admin::UsersController < ApiController
 
   private
 
+  # Return Most recent user's by last_active
   def mammoth_users
-    Rails.logger.warn "THROTTLE_LIMIT: #{THROTTLE_LIMIT}"
-    User.where(local: true).order(last_active: :asc).limit(THROTTLE_LIMIT)
+    User.where(local: true).where.not(last_active: nil).order(last_active: :desc).limit(THROTTLE_LIMIT)
   end
 
   def acct_update_params
