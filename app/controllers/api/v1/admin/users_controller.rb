@@ -7,7 +7,7 @@ class Api::V1::Admin::UsersController < ApiController
   after_action { pagy_headers_merge(@pagy) if @pagy }
 
   THROTTLE_LIMIT = ENV['THROTTLE_LIMIT'] || 30_000
-  USERS_PER_PAGE = 5
+  USERS_PER_PAGE = 500
 
   def index
     @pagy, @users = pagy(mammoth_users, items: USERS_PER_PAGE)
