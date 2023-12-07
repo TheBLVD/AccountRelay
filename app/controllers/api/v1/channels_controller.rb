@@ -1,5 +1,5 @@
 class Api::V1::ChannelsController < ApiController
-  before_action :set_channel, except: %i[index accounts]
+  before_action :set_channel, except: %i[index accounts unsubscribe]
   before_action :set_user, only: %i[subscribe unsubscribe]
 
   rescue_from ArgumentError do |e|
