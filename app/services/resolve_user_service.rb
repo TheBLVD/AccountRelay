@@ -37,11 +37,6 @@ class ResolveUserService < BaseService
 
     @user ||= User.find_remote(@username, @domain)
 
-    if gone_from_origin? && not_yet_deleted?
-      queue_deletion!
-      return
-    end
-
     return @user if @user&.local? || gone_from_origin? || !webfinger_update_due?
 
     # Now it is certain, it is definitely a remote user, and it
@@ -106,8 +101,8 @@ class ResolveUserService < BaseService
   end
 
   def webfinger_update_due?
-    return false if @options[:check_delivery_availability] && !DeliveryFailureTracker.available?(@domain)
-    return false if @options[:skip_webfinger]
+    # return false if @options[:check_delivery_availability] && !DeliveryFailureTracker.available?(@domain)
+    # return false if @options[:skip_webfinger]
 
     @options[:skip_cache] || @user.nil?
   end
@@ -119,17 +114,5 @@ class ResolveUserService < BaseService
 
   def actor_url
     @actor_url ||= @webfinger.link('self', 'href')
-  end
-
-  def gone_from_origin?
-    @gone
-  end
-
-  def not_yet_deleted?
-    @user.present? && !@user.local?
-  end
-
-  def queue_deletion!
-    Rails.logger.warn 'NEED TO REMOVE FROM QUEUE'
   end
 end
