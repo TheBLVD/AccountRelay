@@ -1,3 +1,5 @@
+# Only valid for Mastodon Accounts
+# Update remote_account -> ResolveUserService
 class ResolveRemoteUserService
   include MastodonHelper
   def call(acct, _options = {})

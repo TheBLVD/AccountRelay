@@ -19,6 +19,7 @@
 #  last_active                   :integer          Most Recent Checkin from Feature.Moth.Social in Epoch
 class User < ApplicationRecord
   include AcctHandle
+  include UserFinderConcern
 
   serialize :for_you_settings, JsonbSerializers
   store_accessor :curated_by_mammoth, :friends_of_friends, :from_your_channels, :your_follows, :status,
