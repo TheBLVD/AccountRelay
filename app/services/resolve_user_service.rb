@@ -102,7 +102,7 @@ class ResolveUserService < BaseService
       @user = FetchRemoteUserService.new.call(actor_url, suppress_errors: @options[:suppress_errors])
     end
 
-    @account
+    @user
   end
 
   def webfinger_update_due?
