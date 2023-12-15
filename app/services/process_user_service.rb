@@ -23,17 +23,15 @@ class ProcessUserService < BaseService
     # The key does not need to be unguessable, it just needs to be somewhat unique
     @options[:request_id] ||= "#{Time.now.utc.to_i}-#{username}@#{domain}"
 
-    with_redis_lock("process_account:#{@uri}") do
-      @user            = User.remote.find_by(uri: @uri) if @options[:only_key]
-      @user          ||= User.find_remote(@username, @domain)
-      @old_public_key     = @user&.public_key
-      @old_protocol       = @user&.protocol
+    @user ||= User.find_remote(@username, @domain)
+    @old_public_key     = @user&.public_key
+    @old_protocol       = @user&.protocol
 
-      # create_user
-      Rails.logger.debug "READY TO CREAT NEW USER>> #{@json}"
+    create_user if @user.nil?
+    Rails.logger.debug "READY TO CREAT NEW USER>> #{@json}"
 
-      # update_user
-    end
+    update_user
+    Rails.logger.debug "USER FOUND > #{@user}"
 
     after_protocol_change! if protocol_changed?
     after_key_change! if key_changed? && !@options[:signed_with_known_key]
@@ -50,10 +48,6 @@ class ProcessUserService < BaseService
     @user.protocol          = :activitypub
     @user.username          = @username
     @user.domain            = @domain
-    @user.private_key       = nil
-    @user.suspended_at      = domain_block.created_at if auto_suspend?
-    @user.suspension_origin = :local if auto_suspend?
-    @user.silenced_at       = domain_block.created_at if auto_silence?
 
     set_immediate_protocol_attributes!
 
@@ -61,14 +55,15 @@ class ProcessUserService < BaseService
   end
 
   def update_user
-    @user.last_webfingered_at = Time.now.utc unless @options[:only_key]
+    Rails.logger.debug "UPDATE USER \n\n\n"
+    @user.last_webfingered_at = Time.now.utc
     @user.protocol            = :activitypub
 
     set_suspension!
     set_immediate_protocol_attributes!
-    set_fetchable_key! unless @user.suspended? && @user.suspension_origin_local?
-    set_immediate_attributes! unless @user.suspended?
-    set_fetchable_attributes! unless @options[:only_key] || @user.suspended?
+    set_fetchable_key!
+    set_immediate_attributes!
+    set_fetchable_attributes!
 
     @user.save_with_optional_media!
   end
@@ -82,19 +77,19 @@ class ProcessUserService < BaseService
     @user.uri                     = @uri
     @user.actor_type              = actor_type
     @user.created_at              = @json['published'] if @json['published'].present?
+    @user.domain_id               = -99 # Used before AP fetch for acct profile
   end
 
   def set_immediate_attributes!
+    Rails.logger.debug "DOING ATTRIBUTES!!!>>> #{@json['name']}"
     @user.featured_collection_url = @json['featured'] || ''
-    @user.devices_url             = @json['devices'] || ''
     @user.display_name            = @json['name'] || ''
     @user.note                    = @json['summary'] || ''
     @user.locked                  = @json['manuallyApprovesFollowers'] || false
     @user.fields                  = property_values || {}
     @user.also_known_as           = as_array(@json['alsoKnownAs'] || []).map { |item| value_or_id(item) }
     @user.discoverable            = @json['discoverable'] || false
-    @user.indexable               = @json['indexable'] || false
-    @user.memorial                = @json['memorial'] || false
+    @user.avatar_remote_url       = @json['icon'] || ''
   end
 
   def set_fetchable_key!
@@ -102,18 +97,6 @@ class ProcessUserService < BaseService
   end
 
   def set_fetchable_attributes!
-    begin
-      @user.avatar_remote_url = image_url('icon') || '' unless skip_download?
-      @user.avatar = nil if @user.avatar_remote_url.blank?
-    rescue Mastodon::UnexpectedResponseError, HTTP::TimeoutError, HTTP::ConnectionError, OpenSSL::SSL::SSLError
-      RedownloadAvatarWorker.perform_in(rand(30..600).seconds, @user.id)
-    end
-    begin
-      @user.header_remote_url = image_url('image') || '' unless skip_download?
-      @user.header = nil if @user.header_remote_url.blank?
-    rescue Mastodon::UnexpectedResponseError, HTTP::TimeoutError, HTTP::ConnectionError, OpenSSL::SSL::SSLError
-      RedownloadHeaderWorker.perform_in(rand(30..600).seconds, @user.id)
-    end
     @user.statuses_count    = outbox_total_items    if outbox_total_items.present?
     @user.following_count   = following_total_items if following_total_items.present?
     @user.followers_count   = followers_total_items if followers_total_items.present?
@@ -131,16 +114,6 @@ class ProcessUserService < BaseService
     else
       @json['type']
     end
-  end
-
-  def image_url(key)
-    value = first_of_value(@json[key])
-
-    return if value.nil?
-    return value['url'] if value.is_a?(Hash)
-
-    image = fetch_resource_without_id_validation(value)
-    image['url'] if image
   end
 
   def public_key
@@ -220,34 +193,8 @@ class ProcessUserService < BaseService
     account
   end
 
-  def skip_download?
-    @user.suspended? || domain_block&.reject_media?
-  end
-
-  def auto_suspend?
-    domain_block&.suspend?
-  end
-
-  def auto_silence?
-    domain_block&.silence?
-  end
-
-  def domain_block
-    return @domain_block if defined?(@domain_block)
-
-    @domain_block = DomainBlock.rule_for(@domain)
-  end
-
   def key_changed?
     !@old_public_key.nil? && @old_public_key != @user.public_key
-  end
-
-  def suspension_changed?
-    @suspension_changed
-  end
-
-  def clear_tombstones!
-    Tombstone.where(account_id: @user.id).delete_all
   end
 
   def protocol_changed?

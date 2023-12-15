@@ -21,6 +21,8 @@ class User < ApplicationRecord
   include AcctHandle
   include UserFinderConcern
 
+  enum protocol: { ostatus: 0, activitypub: 1 }
+
   serialize :for_you_settings, JsonbSerializers
   store_accessor :curated_by_mammoth, :friends_of_friends, :from_your_channels, :your_follows, :status,
                  :enabled_channels
@@ -30,6 +32,7 @@ class User < ApplicationRecord
                                                                                errors
                                                                              }, schema: FOR_YOU_SETTINGS_SCHEMA }
   validates :username, uniqueness: { scope: :domain }
+  validates :uri, presence: true
 
   has_many :active_relationships,  class_name: 'Follow', foreign_key: 'user_id',        dependent: :destroy
   has_many :passive_relationships, class_name: 'Follow', foreign_key: 'target_user_id', dependent: :destroy

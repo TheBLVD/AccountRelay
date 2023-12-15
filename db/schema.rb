@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_12_05_161521) do
+ActiveRecord::Schema.define(version: 2023_12_15_183612) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -91,6 +91,19 @@ ActiveRecord::Schema.define(version: 2023_12_05_161521) do
     t.jsonb "for_you_settings", default: {}, null: false
     t.boolean "personalize", default: false
     t.bigint "last_active"
+    t.string "inbox_url", default: ""
+    t.string "outbox_url", default: ""
+    t.string "shared_inbox_url", default: ""
+    t.string "followers_url", default: ""
+    t.string "uri", default: ""
+    t.string "url"
+    t.string "actor_type"
+    t.string "featured_collection_url"
+    t.string "note", default: ""
+    t.jsonb "fields", default: {}
+    t.string "avatar_remote_url"
+    t.text "public_key", default: ""
+    t.integer "protocol", default: 0
     t.index ["username", "domain"], name: "index_users_on_username_and_domain", unique: true
   end
 

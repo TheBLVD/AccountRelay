@@ -11,6 +11,48 @@ module JsonldHelper
     needles.any? { |needle| equals_or_includes?(haystack, needle) }
   end
 
+  def first_of_value(value)
+    value.is_a?(Array) ? value.first : value
+  end
+
+  def uri_from_bearcap(str)
+    if str&.start_with?('bear:')
+      Addressable::URI.parse(str).query_values['u']
+    else
+      str
+    end
+  end
+
+  # The url attribute can be a string, an array of strings, or an array of objects.
+  # The objects could include a mimeType. Not-included mimeType means it's text/html.
+  def url_to_href(value, preferred_type = nil)
+    single_value = if value.is_a?(Array) && !value.first.is_a?(String)
+                     value.find do |link|
+                       preferred_type.nil? || ((link['mimeType'].presence || 'text/html') == preferred_type)
+                     end
+                   elsif value.is_a?(Array)
+                     value.first
+                   else
+                     value
+                   end
+
+    if single_value.nil? || single_value.is_a?(String)
+      single_value
+    else
+      single_value['href']
+    end
+  end
+
+  def as_array(value)
+    if value.nil?
+      []
+    elsif value.is_a?(Array)
+      value
+    else
+      [value]
+    end
+  end
+
   def fetch_resource(uri, id, on_behalf_of = nil)
     unless id
       json = fetch_resource_without_id_validation(uri, on_behalf_of)

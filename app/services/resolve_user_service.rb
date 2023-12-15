@@ -109,7 +109,7 @@ class ResolveUserService < BaseService
     return false if @options[:check_delivery_availability] && !DeliveryFailureTracker.available?(@domain)
     return false if @options[:skip_webfinger]
 
-    @options[:skip_cache] || @user.nil? || @user.possibly_stale?
+    @options[:skip_cache] || @user.nil?
   end
 
   def activitypub_ready?
