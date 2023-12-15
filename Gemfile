@@ -43,7 +43,8 @@ gem 'bootsnap', '>= 1.4.4', require: false
 # Processing Jobs
 gem 'connection_pool', '~> 2.4', '>= 2.4.1'
 gem 'hiredis', '~> 0.6.1'
-gem 'redis'
+gem 'mario-redis-lock', '~> 1.2', require: 'redis_lock'
+gem 'redis', require: ['redis', 'redis/connection/hiredis']
 gem 'sidekiq'
 gem 'sidekiq-bulk', '~> 0.2.0'
 gem 'sidekiq-scheduler', '~> 4.0'

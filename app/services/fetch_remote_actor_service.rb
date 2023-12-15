@@ -8,21 +8,52 @@ class FetchRemoteActorService < BaseService
 
   SUPPORTED_TYPES = %w[Application Group Organization Person Service].freeze
 
-  def call(uri, _options = {})
-    if uri.is_a?(Account)
-      @account = uri
-      @username = @account.username
-      @domain   = @account.domain
+  def call(uri, id: true, prefetched_body: nil, break_on_redirect: false, only_key: false, suppress_errors: true,
+           request_id: nil)
+    if uri.is_a?(User)
+      @user = uri
+      @username = @user.username
+      @domain   = @user.domain
     else
+      Rails.logger.debug "FetchRemoteActorService: #{uri}"
       @username, @domain = uri.strip.gsub(/\A@/, '').split('@')
+      Rails.logger.debug "FetchRemoteActorService: #{@username}@#{@domain}"
     end
 
+    @json = begin
+      fetch_resource(uri, id)
+    rescue Oj::ParseError
+      raise Error, "Error parsing JSON-LD document #{uri}"
+    end
+
+    raise Error, "Error fetching actor JSON at #{uri}" if @json.nil?
+    raise Error, "Unexpected object type for actor #{uri} (expected any of: #{SUPPORTED_TYPES})" unless expected_type?
+    raise Error, "Actor #{uri} has moved to #{@json['movedTo']}" if break_on_redirect && @json['movedTo'].present?
+
+    if @json['preferredUsername'].blank?
+      raise Error,
+            "Actor #{uri} has no 'preferredUsername', which is a requirement for Mastodon compatibility"
+    end
+
+    @uri      = @json['id']
+    @username = @json['preferredUsername']
+    @domain   = Addressable::URI.parse(@uri).normalized_host
+
     check_webfinger!
+
+    ProcessUserService.new.call(@username, @domain, @json, only_key:, verified_webfinger: !only_key,
+                                                           request_id:)
+  rescue Error => e
+    Rails.logger.debug do
+      "Fetching actor #{uri} failed: #{e.message}"
+    end
+    raise unless suppress_errors
   end
 
   private
 
   def check_webfinger!
+    Rails.logger.debug "Checking webfinger >> #{@username} : #{@domain}"
     webfinger                            = webfinger!("acct:#{@username}@#{@domain}")
     confirmed_username, confirmed_domain = split_acct(webfinger.subject)
 
@@ -53,5 +84,13 @@ class FetchRemoteActorService < BaseService
 
   def split_acct(acct)
     acct.gsub(/\Aacct:/, '').split('@')
+  end
+
+  def supported_context?
+    super(@json)
+  end
+
+  def expected_type?
+    equals_or_includes_any?(@json['type'], SUPPORTED_TYPES)
   end
 end
