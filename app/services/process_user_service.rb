@@ -56,16 +56,14 @@ class ProcessUserService < BaseService
 
   def update_user
     Rails.logger.debug "UPDATE USER \n\n\n"
-    @user.last_webfingered_at = Time.now.utc
-    @user.protocol            = :activitypub
+    @user.protocol = :activitypub
 
-    set_suspension!
     set_immediate_protocol_attributes!
     set_fetchable_key!
     set_immediate_attributes!
     set_fetchable_attributes!
 
-    @user.save_with_optional_media!
+    @user.save!
   end
 
   def set_immediate_protocol_attributes!
@@ -85,9 +83,7 @@ class ProcessUserService < BaseService
     @user.featured_collection_url = @json['featured'] || ''
     @user.display_name            = @json['name'] || ''
     @user.note                    = @json['summary'] || ''
-    @user.locked                  = @json['manuallyApprovesFollowers'] || false
     @user.fields                  = property_values || {}
-    @user.also_known_as           = as_array(@json['alsoKnownAs'] || []).map { |item| value_or_id(item) }
     @user.discoverable            = @json['discoverable'] || false
     @user.avatar_remote_url       = @json['icon'] || ''
   end
@@ -97,11 +93,8 @@ class ProcessUserService < BaseService
   end
 
   def set_fetchable_attributes!
-    @user.statuses_count    = outbox_total_items    if outbox_total_items.present?
     @user.following_count   = following_total_items if following_total_items.present?
     @user.followers_count   = followers_total_items if followers_total_items.present?
-    @user.hide_collections  = following_private? || followers_private?
-    @user.moved_to_account  = @json['movedTo'].present? ? moved_account : nil
   end
 
   def check_links!
