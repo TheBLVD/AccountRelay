@@ -39,8 +39,15 @@ class FetchRemoteActorService < BaseService
     @username = @json['preferredUsername']
     @domain   = Addressable::URI.parse(@uri).normalized_host
 
-    Rails.logger.debug "RESOURCE FETCHED!>>>>>>>> #{@json.inspect}"
     check_webfinger!
+
+    ProcessUserService.new.call(@username, @domain, @json, only_key:, verified_webfinger: !only_key,
+                                                           request_id:)
+  rescue Error => e
+    Rails.logger.debug do
+      "Fetching actor #{uri} failed: #{e.message}"
+    end
+    raise unless suppress_errors
   end
 
   private

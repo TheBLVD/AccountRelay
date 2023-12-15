@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 class ProcessUserService < BaseService
-  include JsonLdHelper
+  include JsonldHelper
   include Redisable
   include Lockable
 
   SUBDOMAINS_RATELIMIT = 10
   DISCOVERIES_PER_REQUEST = 400
 
-    # Should be called with confirmed valid JSON
-    # and WebFinger-resolved username and domain
+  # Should be called with confirmed valid JSON
+  # and WebFinger-resolved username and domain
   def call(username, domain, json, options = {})
     return if json['inbox'].blank? || unsupported_uri_scheme?(json['id'])
 
@@ -28,46 +28,24 @@ class ProcessUserService < BaseService
       @user          ||= User.find_remote(@username, @domain)
       @old_public_key     = @user&.public_key
       @old_protocol       = @user&.protocol
-      @suspension_changed = false
 
-      if @user.nil?
-        with_redis do |redis|
-          return nil if redis.pfcount("unique_subdomains_for:#{PublicSuffix.domain(@domain, 
-ignore_private: true)}") >= SUBDOMAINS_RATELIMIT
+      # create_user
+      Rails.logger.debug "READY TO CREAT NEW USER>> #{@json}"
 
-          discoveries = redis.incr("discovery_per_request:#{@options[:request_id]}")
-          redis.expire("discovery_per_request:#{@options[:request_id]}", 5.minutes.seconds)
-          return nil if discoveries > DISCOVERIES_PER_REQUEST
-        end
-
-        create_account
-      end
-
-      update_account
-      process_tags
-
-      process_duplicate_accounts! if @options[:verified_webfinger]
+      # update_user
     end
 
     after_protocol_change! if protocol_changed?
     after_key_change! if key_changed? && !@options[:signed_with_known_key]
-    clear_tombstones! if key_changed?
-    after_suspension_change! if suspension_changed?
-
-    unless @options[:only_key] || @user.suspended?
-      check_featured_collection! if @user.featured_collection_url.present?
-      check_featured_tags_collection! if @json['featuredTags'].present?
-      check_links! if @user.fields.any?(&:requires_verification?)
-    end
 
     @user
   rescue Oj::ParseError
     nil
   end
 
-    private
+  private
 
-  def create_account
+  def create_user
     @user = User.new
     @user.protocol          = :activitypub
     @user.username          = @username
@@ -82,7 +60,7 @@ ignore_private: true)}") >= SUBDOMAINS_RATELIMIT
     @user.save!
   end
 
-  def update_account
+  def update_user
     @user.last_webfingered_at = Time.now.utc unless @options[:only_key]
     @user.protocol            = :activitypub
 
@@ -143,56 +121,13 @@ ignore_private: true)}") >= SUBDOMAINS_RATELIMIT
     @user.moved_to_account  = @json['movedTo'].present? ? moved_account : nil
   end
 
-  def set_suspension!
-    return if @user.suspended? && @user.suspension_origin_local?
-
-    if @user.suspended? && !@json['suspended']
-      @user.unsuspend!
-      @suspension_changed = true
-    elsif !@user.suspended? && @json['suspended']
-      @user.suspend!(origin: :remote)
-      @suspension_changed = true
-    end
-  end
-
-  def after_protocol_change!
-    ActivityPub::PostUpgradeWorker.perform_async(@user.domain)
-  end
-
-  def after_key_change!
-    RefollowWorker.perform_async(@user.id)
-  end
-
-  def after_suspension_change!
-    if @user.suspended?
-      Admin::SuspensionWorker.perform_async(@user.id)
-    else
-      Admin::UnsuspensionWorker.perform_async(@user.id)
-    end
-  end
-
-  def check_featured_collection!
-    ActivityPub::SynchronizeFeaturedCollectionWorker.perform_async(@user.id, 
-{ 'hashtag' => @json['featuredTags'].blank?, 'request_id' => @options[:request_id] })
-  end
-
-  def check_featured_tags_collection!
-    ActivityPub::SynchronizeFeaturedTagsCollectionWorker.perform_async(@user.id, @json['featuredTags'])
-  end
-
   def check_links!
     VerifyUserLinksWorker.perform_async(@user.id)
   end
 
-  def process_duplicate_accounts!
-    return unless User.where(uri: @user.uri).where.not(id: @user.id).exists?
-
-    UserMergingWorker.perform_async(@user.id)
-  end
-
   def actor_type
     if @json['type'].is_a?(Array)
-      @json['type'].find { |type| ActivityPub::FetchRemoteUserService::SUPPORTED_TYPES.include?(type) }
+      @json['type'].find { |type| FetchRemoteUserService::SUPPORTED_TYPES.include?(type) }
     else
       @json['type']
     end
@@ -233,8 +168,9 @@ ignore_private: true)}") >= SUBDOMAINS_RATELIMIT
   def property_values
     return unless @json['attachment'].is_a?(Array)
 
-    as_array(@json['attachment']).select { |attachment|
- attachment['type'] == 'PropertyValue' }.map { |attachment| attachment.slice('name', 'value') }
+    as_array(@json['attachment']).select do |attachment|
+      attachment['type'] == 'PropertyValue'
+    end.map { |attachment| attachment.slice('name', 'value') }
   end
 
   def mismatching_origin?(url)
@@ -279,8 +215,8 @@ ignore_private: true)}") >= SUBDOMAINS_RATELIMIT
 
   def moved_account
     account   = ActivityPub::TagManager.instance.uri_to_resource(@json['movedTo'], User)
-    account ||= ActivityPub::FetchRemoteUserService.new.call(@json['movedTo'], id: true, break_on_redirect: true, 
-request_id: @options[:request_id])
+    account ||= ActivityPub::FetchRemoteUserService.new.call(@json['movedTo'], id: true, break_on_redirect: true,
+                                                                               request_id: @options[:request_id])
     account
   end
 
@@ -316,30 +252,5 @@ request_id: @options[:request_id])
 
   def protocol_changed?
     !@old_protocol.nil? && @old_protocol != @user.protocol
-  end
-
-  def process_tags
-    return if @json['tag'].blank?
-
-    as_array(@json['tag']).each do |tag|
-      process_emoji tag if equals_or_includes?(tag['type'], 'Emoji')
-    end
-  end
-
-  def process_emoji(tag)
-    return if skip_download?
-    return if tag['name'].blank? || tag['icon'].blank? || tag['icon']['url'].blank?
-
-    shortcode = tag['name'].delete(':')
-    image_url = tag['icon']['url']
-    uri       = tag['id']
-    updated   = tag['updated']
-    emoji     = CustomEmoji.find_by(shortcode:, domain: @user.domain)
-
-    return unless emoji.nil? || image_url != emoji.image_remote_url || (updated && updated >= emoji.updated_at)
-
-    emoji ||= CustomEmoji.new(domain: @user.domain, shortcode:, uri:))
-    emoji.image_remote_url = image_url
-    emoji.save
   end
 end
