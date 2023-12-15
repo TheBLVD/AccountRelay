@@ -28,7 +28,7 @@ class ResolveUserService < BaseService
 
     # At this point we are in need of a Webfinger query, which may
     # yield us a different username/domain through a redirect
-    Rails.logger.debug 'PROCESS WEBFINGER'
+    Rails.logger.info 'PROCESS WEBFINGER'
     process_webfinger!(@uri)
 
     # Because the username/domain pair may be different than what
@@ -44,7 +44,7 @@ class ResolveUserService < BaseService
 
     fetch_user!
   rescue Webfinger::Error => e
-    Rails.logger.debug { "Webfinger query for #{@uri} failed: #{e}" }
+    Rails.logger.info { "Webfinger query for #{@uri} failed: #{e}" }
     raise unless @options[:suppress_errors]
   end
 

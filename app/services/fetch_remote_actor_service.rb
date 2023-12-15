@@ -15,9 +15,9 @@ class FetchRemoteActorService < BaseService
       @username = @user.username
       @domain   = @user.domain
     else
-      Rails.logger.debug "FetchRemoteActorService: #{uri}"
+      Rails.logger.info "FetchRemoteActorService: #{uri}"
       @username, @domain = uri.strip.gsub(/\A@/, '').split('@')
-      Rails.logger.debug "FetchRemoteActorService: #{@username}@#{@domain}"
+      Rails.logger.info "FetchRemoteActorService: #{@username}@#{@domain}"
     end
 
     @json = begin
@@ -44,7 +44,7 @@ class FetchRemoteActorService < BaseService
     ProcessUserService.new.call(@username, @domain, @json, only_key:, verified_webfinger: !only_key,
                                                            request_id:)
   rescue Error => e
-    Rails.logger.debug do
+    Rails.logger.info do
       "Fetching actor #{uri} failed: #{e.message}"
     end
     raise unless suppress_errors
@@ -53,7 +53,7 @@ class FetchRemoteActorService < BaseService
   private
 
   def check_webfinger!
-    Rails.logger.debug "Checking webfinger >> #{@username} : #{@domain}"
+    Rails.logger.info "Checking webfinger >> #{@username} : #{@domain}"
     webfinger                            = webfinger!("acct:#{@username}@#{@domain}")
     confirmed_username, confirmed_domain = split_acct(webfinger.subject)
 
