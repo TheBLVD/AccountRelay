@@ -37,7 +37,7 @@ class ResolveUserService < BaseService
 
     @user ||= User.find_remote(@username, @domain)
 
-    return @user if @user&.local? || gone_from_origin? || !webfinger_update_due?
+    return @user if @user&.local? || !webfinger_update_due?
 
     # Now it is certain, it is definitely a remote user, and it
     # either needs to be created, or updated from fresh data
