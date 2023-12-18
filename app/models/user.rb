@@ -32,7 +32,7 @@ class User < ApplicationRecord
                                                                                errors
                                                                              }, schema: FOR_YOU_SETTINGS_SCHEMA }
   validates :username, uniqueness: { scope: :domain }
-  validates :uri, presence: true
+  # validates :uri, presence: true
 
   has_many :active_relationships,  class_name: 'Follow', foreign_key: 'user_id',        dependent: :destroy
   has_many :passive_relationships, class_name: 'Follow', foreign_key: 'target_user_id', dependent: :destroy
