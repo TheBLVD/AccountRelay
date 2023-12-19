@@ -9,7 +9,7 @@ class Webfinger
     attr_reader :uri
 
     def initialize(uri, body)
-      @uri  = uri
+      @uri = uri
       @json = Oj.load(body, mode: :strict)
 
       validate_response!
@@ -55,10 +55,9 @@ class Webfinger
   def body_from_webfinger(url = standard_url, use_fallback = true)
     webfinger_request(url).perform do |res|
       if res.code == 200
-        body = res.body_with_limit
-        raise Webfinger::Error, "Request for #{@uri} returned empty response" if body.empty?
+        raise Webfinger::Error, "Request for #{@uri} returned empty response" if res.body.empty?
 
-        body
+        return res.body.to_s
       elsif res.code == 404 && use_fallback
         body_from_host_meta
       elsif res.code == 410
