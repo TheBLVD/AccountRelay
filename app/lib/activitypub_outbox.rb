@@ -73,7 +73,7 @@ class ActivitypubOutbox
   # if it's blank then we can construct the outbox based on
   # Mastodon endpoints.
   def outbox_url
-    return "https://#{@domain}/users/#{@username}/outbox" if @out.blank?
+    return "https://#{@domain}/users/#{@username}/outbox" if @outbox_url.blank?
 
     @outbox_url
   end
