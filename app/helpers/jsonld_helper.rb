@@ -75,7 +75,7 @@ module JsonldHelper
               response
       end
 
-      body_to_json(response.body_with_limit) if response.code == 200
+      body_to_json(response.body.to_s) if response.code == 200
     end
   end
 
