@@ -17,6 +17,7 @@
 #  local                         :boolean          a local account was created via the api. considered a Mammoth user.
 #  personalize                   :boolean          Mammoth account has updated with personaliztion. ie generated follows/fedigraph
 #  last_active                   :integer          Most Recent Checkin from Feature.Moth.Social in Epoch
+#  outbox_url                    :string           user outbox url for activitypub
 class User < ApplicationRecord
   include AcctHandle
   include UserFinderConcern

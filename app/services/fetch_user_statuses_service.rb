@@ -6,10 +6,11 @@ class FetchUserStatusesService < BaseService
   include ActivitypubOutboxHelper
   INSTANCE_URL = 'https://moth.social'
 
-  def call(user_id, username, domain)
+  def call(user_id, username, domain, outbox_url)
     @user_id = user_id
     @username = username
     @domain = domain
+    @outbox_url = outbox_url
     @status_min_id = StatusManager.instance.fetch_min_id(@user_id)
 
     Rails.logger.info "OPTIONS: >>>> #{@status_min_id}"
@@ -18,7 +19,7 @@ class FetchUserStatusesService < BaseService
 
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
-    outbox = outbox!("#{@username}@#{@domain}", @status_min_id)
+    outbox = outbox!("#{@username}@#{@domain}", @outbox_url, @status_min_id)
     Rails.logger.info "OPTIONS: >>>> #{outbox}"
     return if outbox.nil? || outbox.ordered_items.nil? || outbox.ordered_items.empty?
 

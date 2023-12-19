@@ -24,10 +24,11 @@ class ActivitypubOutbox
     end
   end
 
-  def initialize(uri, min_id = nil)
+  def initialize(uri, outbox_url, min_id = nil)
     @username, @domain = uri.split('@')
+    @outbox_url = outbox_url
     @min_id = min_id
-    Rails.logger.info "ACPUB>> #{uri} :: #{min_id}"
+    Rails.logger.info "ACPUB>> #{uri} :: #{@min_id} :: #{@outbox_url}"
     raise ArgumentError, 'Statuses requested for local account' if @domain.nil?
 
     @uri = uri
@@ -62,9 +63,18 @@ class ActivitypubOutbox
   # https://staging.moth.social/users/jtomchak/outbox?min_id=0&page=true
   def standard_url
     if @min_id.nil?
-      "https://#{@domain}/users/#{@username}/outbox?page=true"
+      "#{outbox_url}?page=true"
     else
-      "https://#{@domain}/users/#{@username}/outbox?min_id=#{@min_id}&page=true"
+      "#{outbox_url}?min_id=#{@min_id}&page=true"
     end
+  end
+
+  # Check for outbox_url of user
+  # if it's blank then we can construct the outbox based on
+  # Mastodon endpoints.
+  def outbox_url
+    return "https://#{@domain}/users/#{@username}/outbox" if @out.blank?
+
+    @outbox_url
   end
 end

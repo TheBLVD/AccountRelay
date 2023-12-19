@@ -4,7 +4,7 @@ require 'http'
 require 'json'
 
 # Get users that are accounts of any and all Channels
-# Each User is sent to fetch_remote_statuses_service (that will fetch and send the statuses for that account) -workerB
+# Each User is sent to FetchUserStatusesService (that will fetch and send the statuses for that account) -workerB
 class Scheduler::UpdateChannelAcctStatusesScheduler
   include Sidekiq::Worker
 
@@ -18,6 +18,6 @@ class Scheduler::UpdateChannelAcctStatusesScheduler
   private
 
   def channel_accounts
-    ChannelAccount.all.includes(:user).pluck(:user_id, :username, :domain).zip
+    ChannelAccount.all.includes(:user).pluck(:user_id, :username, :domain, :outbox_url).zip
   end
 end
