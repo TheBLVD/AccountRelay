@@ -79,13 +79,13 @@ class ProcessUserService < BaseService
   end
 
   def set_immediate_attributes!
-    Rails.logger.debug "DOING ATTRIBUTES!!!>>> #{@json['name']}"
+    Rails.logger.debug "DOING ATTRIBUTES!!!>>> #{@json['name']} \n #{@json['summary']}"
     @user.featured_collection_url = @json['featured'] || ''
     @user.display_name            = @json['name'] || ''
     @user.note                    = @json['summary'] || ''
     @user.fields                  = property_values || {}
     @user.discoverable            = @json['discoverable'] || false
-    @user.avatar_remote_url       = @json['icon'] || ''
+    @user.avatar_remote_url       = image_url('icon') || ''
   end
 
   def set_fetchable_key!
@@ -107,6 +107,16 @@ class ProcessUserService < BaseService
     else
       @json['type']
     end
+  end
+
+  def image_url(key)
+    value = first_of_value(@json[key])
+
+    return if value.nil?
+    return value['url'] if value.is_a?(Hash)
+
+    image = fetch_resource_without_id_validation(value)
+    image['url'] if image
   end
 
   def public_key
