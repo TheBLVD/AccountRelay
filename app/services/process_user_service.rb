@@ -79,7 +79,6 @@ class ProcessUserService < BaseService
   end
 
   def set_immediate_attributes!
-    Rails.logger.debug "DOING ATTRIBUTES!!!>>> #{@json['name']} \n #{@json['summary']}"
     @user.featured_collection_url = @json['featured'] || ''
     @user.display_name            = @json['name'] || ''
     @user.note                    = @json['summary'] || ''
