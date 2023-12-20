@@ -25,7 +25,7 @@ class FetchUserStatusesService < BaseService
 
     if @status_min_id.nil?
       Rails.logger.info 'NO MIN_ID FOUND: SEND ONLY MOST RECENT STATUS'
-      Rails.logger.info "ORDERED ITEMS: #{outbox.ordered_items}"
+      Rails.logger.info "ORDERED ITEMS COUNT: #{outbox.ordered_items.count}"
       status = outbox.ordered_items.first
       send_announcement(status)
     else
@@ -52,6 +52,9 @@ class FetchUserStatusesService < BaseService
     # Check status object is hash or string
     status_url = (status[:object].is_a? String) ? status[:object] : status[:object][:id]
     return if status_url.nil?
+
+    Rails.logger.debug "STATUS URL: \n\n #{status_url}"
+    return nil
 
     content = announcement_payload(status_url)
 

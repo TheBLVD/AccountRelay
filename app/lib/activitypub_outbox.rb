@@ -1,4 +1,5 @@
 class ActivitypubOutbox
+  include JsonldHelper
   class Error < StandardError; end
   class GoneError < Error; end
   class RedirectError < Error; end
@@ -61,20 +62,32 @@ class ActivitypubOutbox
   end
 
   # https://staging.moth.social/users/jtomchak/outbox?min_id=0&page=true
+  # No outbox_url use Mastodon outbox path
+  # TODO: replace page=true with fetching the 'frist' value from outbox
   def standard_url
+    return mastodon_standard_outbox_url if @outbox_url.blank?
+
+    outbox_url
+  end
+
+  def mastodon_standard_outbox_url
     if @min_id.nil?
-      "#{outbox_url}?page=true"
+      "https://#{@domain}/users/#{@username}/outbox?page=true"
     else
-      "#{outbox_url}?min_id=#{@min_id}&page=true"
+      "https://#{@domain}/users/#{@username}/outbox?min_id=#{@min_id}&page=true"
     end
   end
 
   # Check for outbox_url of user
-  # if it's blank then we can construct the outbox based on
-  # Mastodon endpoints.
+  # for the 'first' properity. This gives the params of the outbox page=true or page=1,
+  # possibility other options
   def outbox_url
-    return "https://#{@domain}/users/#{@username}/outbox" if @outbox_url.blank?
-
-    @outbox_url
+    build_request(@outbox_url).perform do |response|
+      unless response_successful?(response) || response_error_unsalvageable?(response) || !raise_on_temporary_error
+        raise AccountRelay::UnexpectedResponseError,
+              response
+      end
+      Oj.load(response.body.to_s, symbol_keys: true)[:first]
+    end
   end
 end
