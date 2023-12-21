@@ -54,7 +54,6 @@ class FetchUserStatusesService < BaseService
     return if status_url.nil?
 
     Rails.logger.debug "STATUS URL: \n\n #{status_url}"
-    return nil
 
     content = announcement_payload(status_url)
 
