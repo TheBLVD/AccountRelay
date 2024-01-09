@@ -18,6 +18,6 @@ class Scheduler::UpdateUserStatusesScheduler
   private
 
   def users
-    User.all.pluck(:id, :username, :domain).zip
+    User.all.pluck(:user_id, :username, :domain, :outbox_url).zip
   end
 end
