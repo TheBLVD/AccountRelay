@@ -66,19 +66,24 @@ class ActivitypubOutbox
 
   private
 
+  # Return Parsed Outbox Body
+  # if 'first' is a hash or 'orderedItems' that's what we want. return that result
+  # otherwise 'first' is a uri, likely the save with url query params `page=true` or `page=1`
   def body_from_outbox(url = standard_url)
     Rails.logger.info "URL REQUEST>>>: #{url}"
     outbox_collection = fetch_outbox(url)
-    return outbox_collection if outbox_collection.is_a?(Hash)
+    return outbox_collection if outbox_collection[:first].is_a?(Hash) || outbox_collection[:orderedItems].present?
 
     fetch_outbox(outbox_collection[:first]) if outbox_collection[:first].present?
   end
 
   # https://staging.moth.social/users/jtomchak/outbox?min_id=0&page=true
   # No outbox_url use Mastodon outbox path
-  # TODO: replace page=true with fetching the 'frist' value from outbox
   def standard_url
-    @outbox_url || mastodon_standard_outbox_url
+    Rails.logger.debug "OUTBOX IS: #{@outbox_url.blank?}"
+    return mastodon_standard_outbox_url if @outbox_url.blank?
+
+    @outbox_url
   end
 
   def mastodon_standard_outbox_url

@@ -8,7 +8,7 @@ class StatusManager
 
   # Redis key of a status
   # @param [Integer] id
-  # @param [Symbol] type 'min_id' | 'max_id'
+  # @param [Symbol] type 'min_id' | 'max_id' | 'last_known_id'
   # @return [String]
   def key(type, id)
     @type = type.to_s
@@ -19,12 +19,22 @@ class StatusManager
     Rails.logger.info "REDIS FETCHING:::: #{user_id}"
     key = key('min_id', user_id)
     Rails.cache.read(key)
-end 
+  end 
 
-def update_min_id(user_id, value)
+  def update_min_id(user_id, value)
     Rails.logger.info "SETTING FETCHING:::: #{user_id} with #{value}"
     key = key('min_id', user_id)
     Rails.cache.write(key, value)
   end 
+
+  def last_known_id(user_id)
+    key = key('last_known_id', user_id)
+    Rails.cache.read(key)
+  end
+
+  def update_last_known_id(user_id, uri)
+    key = key('last_known_id', user_id)
+    Rails.cache.write(key, uri)
+  end
 
 end 
