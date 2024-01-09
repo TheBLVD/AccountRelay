@@ -18,6 +18,6 @@ class Scheduler::UpdateChannelAcctStatusesScheduler
   private
 
   def channel_accounts
-    ChannelAccount.all.includes(:user).pluck(:user_id, :username, :domain, :outbox_url)
+    ChannelAccount.all.includes(:user).pluck(:user_id, :username, :domain, :outbox_url).zip
   end
 end
