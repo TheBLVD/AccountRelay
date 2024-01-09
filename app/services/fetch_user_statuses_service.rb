@@ -20,16 +20,15 @@ class FetchUserStatusesService < BaseService
   # Required account handle & min_id (defaults to 0)
   def fetch_outbox!
     outbox = outbox!("#{@username}@#{@domain}", @outbox_url, @status_min_id)
-    Rails.logger.info "OPTIONS: >>>> #{outbox}"
-    return if outbox.nil? || outbox.ordered_items.nil? || outbox.ordered_items.empty?
+    return if outbox.nil? || outbox.collection_items.nil? || outbox.collection_items.empty?
 
     if @status_min_id.nil?
       Rails.logger.info 'NO MIN_ID FOUND: SEND ONLY MOST RECENT STATUS'
-      Rails.logger.info "ORDERED ITEMS COUNT: #{outbox.ordered_items.count}"
-      status = outbox.ordered_items.first
+      Rails.logger.info "ORDERED ITEMS COUNT: #{outbox.collection_items.count}"
+      status = outbox.collection_items.first
       send_announcement(status)
     else
-      outbox.ordered_items.each do |status|
+      outbox.collection_items.each do |status|
         send_announcement(status)
       end
     end
@@ -37,6 +36,7 @@ class FetchUserStatusesService < BaseService
     return if outbox.prev.nil?
 
     # Update min_id for account
+    # TODO: change from min_id to last_known_id
     Rails.logger.info "PREV>>>> #{outbox.prev}"
     min_id = min_id_param(outbox.prev)
     StatusManager.instance.update_min_id(@user_id, min_id)
