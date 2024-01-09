@@ -24,8 +24,10 @@ class ActivitypubOutbox
       collection = outbox_collection
       case collection[:type]
       when 'Collection', 'CollectionPage'
+        Rails.logger.debug "COLLECTION: #{collection[:items]}"
         collection[:items]
       when 'OrderedCollection', 'OrderedCollectionPage'
+        Rails.logger.debug "OrderedCollection: #{collection[:orderedItems]}"
         collection[:orderedItems]
       end
     end
@@ -99,7 +101,7 @@ class ActivitypubOutbox
   # possibility other options
   def fetch_outbox(uri)
     build_request(uri).perform do |response|
-      unless response_successful?(response) || response_error_unsalvageable?(response) || !raise_on_temporary_error
+      unless response_successful?(response) || response_error_unsalvageable?(response)
         raise AccountRelay::UnexpectedResponseError,
               response
       end
