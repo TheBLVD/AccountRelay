@@ -102,7 +102,7 @@ class ActivitypubOutbox
   def fetch_outbox(uri)
     build_request(uri).perform do |response|
       unless response_successful?(response) || response_error_unsalvageable?(response)
-        raise AccountRelay::UnexpectedResponseError,
+        raise ActivitypubOutbox::Error,
               response
       end
       Oj.load(response.body.to_s, symbol_keys: true)
