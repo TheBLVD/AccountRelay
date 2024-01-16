@@ -45,7 +45,7 @@ class Api::V1::Foryou::UsersController < ApiController
   def set_user_with_mammoth
     @user = fetch_user
     # If no user if found, create it
-    @user = User.create_by_remote(acct_param) if @user.nil?
+    @user = ResolveUserService.new.call(acct_param) if @user.nil?
     raise Error, "Unable to resolve user: #{acct_param}" if @user.nil?
 
     # Otherwise ensure it's correct attribute is local
