@@ -16,11 +16,10 @@ class FetchRemoteActorService < BaseService
       @domain   = @user.domain
     else
       Rails.logger.info "FetchRemoteActorService: #{uri}"
-      @username, @domain = uri.strip.gsub(/\A@/, '').split('@')
-      Rails.logger.info "FetchRemoteActorService: #{@username}@#{@domain}"
     end
 
     @json = begin
+      Rails.logger.info "FetchRemoteActorService L22: #{uri}"
       fetch_resource(uri, id)
     rescue Oj::ParseError
       raise Error, "Error parsing JSON-LD document #{uri}"

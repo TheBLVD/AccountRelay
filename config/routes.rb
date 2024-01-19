@@ -1,6 +1,9 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  # root url must resolve with valid JSON
+  get '/', to: redirect('/actor')
+
   ## ActivityPub requirements
   get '/.well-known/webfinger', to: 'well_known/webfinger#show', as: :webfinger
 

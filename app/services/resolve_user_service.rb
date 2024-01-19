@@ -91,6 +91,7 @@ class ResolveUserService < BaseService
   end
 
   def fetch_user!
+    Rails.logger.debug "Fetching 'user' from ResolveUserService L94"
     return unless activitypub_ready?
 
     with_redis_lock("resolve:#{@username}@#{@domain}") do
