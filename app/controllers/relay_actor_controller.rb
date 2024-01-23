@@ -1,10 +1,8 @@
 class RelayActorController < ApiController
   skip_before_action :authenticate_request
-  @relay = "https://#{ENV.fetch('DOMAIN', nil)}"
   def show
-    Rails.logger.info '>>>>>>'
-    Rails.logger.info request.fullpath
-    Rails.logger.info "GET relay_actor request: #{params.inspect}"
+    @relay = "https://#{ENV.fetch('DOMAIN', nil)}"
+
     render json: actor_payload, content_type: 'application/activity+json; charset=utf-8'
   end
 

@@ -104,6 +104,8 @@ module JsonldHelper
   Actor = Struct.new(:uri)
   def build_request(uri, _on_behalf_of = nil)
     Request.new(:get, uri).tap do |request|
+      aa = Actor.new("https://#{ENV.fetch('DOMAIN', nil)}")
+      Rails.logger.debug "ACTOR>>>>> #{aa.uri}"
       request.on_behalf_of(Actor.new("https://#{ENV.fetch('DOMAIN', nil)}"),
                            sign_with: ENV.fetch('PRIVATE_KEY', nil))
       request.add_headers('Accept' => 'application/activity+json, application/ld+json')

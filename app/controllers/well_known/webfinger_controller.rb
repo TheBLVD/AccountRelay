@@ -5,11 +5,9 @@ module WellKnown
     skip_before_action :authenticate_request
     before_action :username_from_resource, only: [:show]
     def show
-      @domain = ENV.fetch('DOMAIN').to_s
-      expires_in 3.days, public: true
-      Rails.logger.info '>>>>>>WEBFINGER:'
-      Rails.logger.info request.fullpath
-      Rails.logger.info "GET relay_actor request: #{params.inspect}"
+      # @domain = 'acctrelay.moth.social'
+      expires_in 7.days, public: true
+
       render json: actor_webfinger, content_type: 'application/jrd+json'
     end
 
@@ -38,8 +36,10 @@ module WellKnown
     end
 
     def username_from_resource
+      @domain = ENV.fetch('DOMAIN').to_s
       resource_user    = resource_param
       username, domain = resource_user.split('@')
+
       return not_found unless username == 'acct:relay' && domain == @domain
     end
 
