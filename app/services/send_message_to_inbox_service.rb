@@ -15,7 +15,7 @@ class SendMessageToInboxService < BaseService
   end
 
   def post_message_to_inbox
-    @relay = 'https://acctrelay.moth.social'
+    @relay = "https://#{ENV.fetch('DOMAIN', nil)}"
     target_host = @target_uri.host
     sha256 = OpenSSL::Digest.new('SHA256')
     digest = 'SHA-256=' + Base64.strict_encode64(sha256.digest(@content.to_json))

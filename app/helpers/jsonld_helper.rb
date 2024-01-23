@@ -68,7 +68,7 @@ module JsonldHelper
 
   def fetch_resource_without_id_validation(uri, on_behalf_of = nil, raise_on_temporary_error = false)
     # on_behalf_of ||= User.representative
-
+    Rails.logger.debug "FETCH RESOURCE: #{uri}"
     build_request(uri, on_behalf_of).perform do |response|
       unless response_successful?(response) || response_error_unsalvageable?(response) || !raise_on_temporary_error
         raise AccountRelay::UnexpectedResponseError,
@@ -101,9 +101,13 @@ module JsonldHelper
     response.code == 501 || ((400...500).cover?(response.code) && ![401, 408, 429].include?(response.code))
   end
 
-  def build_request(uri, on_behalf_of = nil)
+  Actor = Struct.new(:uri)
+  def build_request(uri, _on_behalf_of = nil)
     Request.new(:get, uri).tap do |request|
-      request.on_behalf_of(on_behalf_of) if on_behalf_of
+      aa = Actor.new("https://#{ENV.fetch('DOMAIN', nil)}")
+      Rails.logger.debug "ACTOR>>>>> #{aa.uri}"
+      request.on_behalf_of(Actor.new("https://#{ENV.fetch('DOMAIN', nil)}"),
+                           sign_with: ENV.fetch('PRIVATE_KEY', nil))
       request.add_headers('Accept' => 'application/activity+json, application/ld+json')
     end
   end

@@ -32,10 +32,10 @@ class Request
   end
 
   def on_behalf_of(actor, sign_with: nil)
-    raise ArgumentError, 'actor must not be nil' if actor.nil?
-
     Rails.logger.debug '>>>>ON_BEHALF_OF'
     Rails.logger.debug sign_with
+    raise ArgumentError, 'actor must not be nil' if actor.nil?
+
     @actor         = actor
     @keypair       = sign_with.present? ? OpenSSL::PKey::RSA.new(sign_with) : @actor.keypair
 

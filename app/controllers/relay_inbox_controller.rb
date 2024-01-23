@@ -4,7 +4,7 @@ class RelayInboxController < ApiController
 
   def create
     @host = params['actor']
-    @relay = 'https://acctrelay.moth.social'
+    @relay = "https://#{ENV.fetch('DOMAIN', nil)}"
     @id = params['id']
     SendMessageToInboxService.new.call(@host, instance_follow)
     render json: instance_follow, content_type: 'application/activity+json'
@@ -16,20 +16,20 @@ class RelayInboxController < ApiController
 
   def instance_follow
     {
-      "@context": [
+      '@context': [
         'https://www.w3.org/ns/activitystreams',
         'https://w3id.org/security/v1'
       ],
-      'actor': "#{@relay}/actor",
-      'id': "#{@relay}/activities/#{SecureRandom.uuid}",
-      'type': 'Accept',
-      'object': {
-        'type': 'Follow',
-        'actor': @host.to_s,
-        'object': "#{@relay}/actor",
-        'id': @id.to_s
+      actor: "#{@relay}/actor",
+      id: "#{@relay}/activities/#{SecureRandom.uuid}",
+      type: 'Accept',
+      object: {
+        type: 'Follow',
+        actor: @host.to_s,
+        object: "#{@relay}/actor",
+        id: @id.to_s
       },
-      "to": [
+      to: [
         @host.to_s
       ]
     }
