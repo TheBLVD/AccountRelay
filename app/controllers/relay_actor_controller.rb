@@ -1,6 +1,6 @@
 class RelayActorController < ApiController
   skip_before_action :authenticate_request
-  @relay = 'https://acctrelay.moth.social'
+  @relay = "https://#{ENV.fetch('DOMAIN', nil)}"
   def show
     Rails.logger.info '>>>>>>'
     Rails.logger.info request.fullpath
@@ -12,24 +12,24 @@ class RelayActorController < ApiController
 
   def actor_payload
     {
-      "@context": 'https://www.w3.org/ns/activitystreams',
-      "endpoints": {
-        "sharedInbox": 'https://acctrelay.moth.social/inbox'
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      endpoints: {
+        sharedInbox: "#{@relay}/inbox"
       },
-      "followers": 'https://acctrelay.moth.social/followers',
-      "following": 'https://acctrelay.moth.social/following',
-      "inbox": 'https://acctrelay.moth.social/inbox',
-      "name": 'AcctRelay',
-      "type": 'Application',
-      "id": 'https://acctrelay.moth.social/actor',
-      "publicKey": {
-        "id": 'https://acctrelay.moth.social/actor#main-key',
-        "owner": 'https://acctrelay.moth.social/actor',
-        "publicKeyPem": ENV['PUBLIC_KEY']
+      followers: "#{@relay}/followers",
+      following: "#{@relay}/following",
+      inbox: "#{@relay}/inbox",
+      name: 'AcctRelay',
+      type: 'Application',
+      id: "#{@relay}/actor",
+      publicKey: {
+        id: "#{@relay}/actor#main-key",
+        owner: "#{@relay}/actor",
+        publicKeyPem: ENV.fetch('PUBLIC_KEY', nil)
       },
-      "summary": 'AcctRelay',
-      "preferredUsername": 'relay',
-      "url": 'https://acctrelay.moth.social/actor'
+      summary: 'AcctRelay',
+      preferredUsername: 'relay',
+      url: "#{@relay}/actor"
     }
   end
 end

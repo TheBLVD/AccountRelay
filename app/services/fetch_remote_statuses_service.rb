@@ -57,7 +57,7 @@ class FetchRemoteStatusesService < BaseService
   end
 
   def announcement_payload(status_url)
-    @relay = 'https://acctrelay.moth.social'
+    @relay = "https://#{ENV.fetch('DOMAIN', nil)}"
     {
       '@context': 'https://www.w3.org/ns/activitystreams',
       actor: "#{@relay}/actor",

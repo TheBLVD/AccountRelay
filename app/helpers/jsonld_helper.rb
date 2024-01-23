@@ -2,8 +2,6 @@
 
 module JsonldHelper
   include ContextHelper
-  # RELAY = 'https://acctrelay.moth.social'
-  RELAY = 'https://293f-71-209-190-172.ngrok-free.app'
 
   def equals_or_includes?(haystack, needle)
     haystack.is_a?(Array) ? haystack.include?(needle) : haystack == needle
@@ -106,8 +104,7 @@ module JsonldHelper
   Actor = Struct.new(:uri)
   def build_request(uri, _on_behalf_of = nil)
     Request.new(:get, uri).tap do |request|
-      Rails.logger.debug "RELAY #{JsonldHelper::RELAY}"
-      request.on_behalf_of(Actor.new('https://293f-71-209-190-172.ngrok-free.app'),
+      request.on_behalf_of(Actor.new("https://#{ENV.fetch('DOMAIN', nil)}"),
                            sign_with: ENV.fetch('PRIVATE_KEY', nil))
       request.add_headers('Accept' => 'application/activity+json, application/ld+json')
     end
