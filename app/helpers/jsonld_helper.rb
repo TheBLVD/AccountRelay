@@ -3,6 +3,8 @@
 module JsonldHelper
   include ContextHelper
 
+  ACCEPT_HEADER = 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams", text/html;q=0.1'
+
   def equals_or_includes?(haystack, needle)
     haystack.is_a?(Array) ? haystack.include?(needle) : haystack == needle
   end
@@ -108,7 +110,7 @@ module JsonldHelper
       Rails.logger.debug "ACTOR>>>>> #{aa.uri}"
       request.on_behalf_of(Actor.new("https://#{ENV.fetch('DOMAIN', nil)}"),
                            sign_with: ENV.fetch('PRIVATE_KEY', nil))
-      request.add_headers('Accept' => 'application/activity+json, application/ld+json')
+      request.add_headers('Accept' => ACCEPT_HEADER)
     end
   end
 
