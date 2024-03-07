@@ -33,8 +33,8 @@ default: &defaults
 # to false to not push metrics for that environment.
 development:
   <<: *defaults
-  active: true
+  active: false
 
 production:
   <<: *defaults
-  active: true
+  active: false
